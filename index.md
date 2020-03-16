@@ -4,14 +4,18 @@ The goal is to get you up and running with Stata as quickly as possible, streaml
 
 The course is designed for advanced undergraduates and graduate students with some background in Statistics / Econometrics. No coding experience is required. All datasets used are publicly available, so I would suggest running through each section, copying and running the code for yourself.
 
-The course is divided into 6 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
+The course is divided into 10 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
 
-1. [Introduction to Stata and Randomized experiments](part1.html)
-2. [Regression](part2.html)
-3. [Matching](part3.html)
-4. [Instrumental Variables](part4.html)
-5. [Difference-in-differences](part5.html)
-6. [Synthetic controls](part6.html)
+1. [Introduction to Stata](part1.html)
+2. [Exploring and cleaning data](part2.html)
+3. [Plotting data](part3.html
+4. [Randomized experiments](part4.html)
+5. [Regression](part5.html)
+6. [Matching](part6.html)
+7. [Instrumental Variables](part7.html)
+8. [Regression discontinuity designs](part8.html)
+9. [Difference-in-differences](part9.html)
+10. [Synthetic controls](part10.html)
 
 Each tutorial was created using the excellent [Stata Markdown](https://data.princeton.edu/stata/markdown), developed by Germán Rodríguez.
 
