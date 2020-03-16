@@ -6,7 +6,7 @@ The course is designed for advanced undergraduates and graduate students with so
 
 The course is divided into 10 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
 
-1. [Introduction to Stata](part1.html)
+1. [Introduction to Stata](docs/part1/part1.html)
 2. [Exploring and cleaning data](docs/part2/part2.html)
 3. [Plotting data](part3.html)
 4. [Randomized experiments](part4.html)
