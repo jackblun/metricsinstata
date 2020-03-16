@@ -1,6 +1,6 @@
 ## Welcome to GitHub Pages
 
-Test link to lecture: <a href="lecture10_markdown.html">Page 2</a>
+Test link to lecture: <a href="lecture10_markdown.html" target="_blank">Page 2</a>
 
 [editor on GitHub](https://github.com/jackblun/metricsinstata/edit/master/README.md)
 
