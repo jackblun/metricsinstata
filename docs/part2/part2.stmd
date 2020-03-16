@@ -1,0 +1,128 @@
+% Lecture 2: 
+% Jack Blundell (Stanford)
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
+
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+
+
+# 1. General feedback on problem set 1
+
+- Great job overall
+
+- Most opted for a report-style write-up including code snippets and graphs
+
+- Please also include a seperate .do file
+
+# 2. Common problems when using Stata
+
+- ***I'm running my .do file but nothing is coming up in the main Stata window.*** The problem here is usually that your .do file editor window is associated with a different main interface window. It is possible to have multiple instances of Stata open simultaneously, each with their own associated .do file editor window. The solution is either to find the correct interface window, or to save the .do file and open it in an alternative editor.
+
+- ***When I try to change into my main working directory, I get the error `unable to change to /XXX`.*** This is usually because there is a small mistake in the file path. You can get around this by manually choosing the directory using "File->Change working directory". This will change the directory and print the code to do so into the results window, which can then be copied into a .do file.
+
+- ***There's too much on the screen to have my .do file editor and main interface window open side-by-side.*** This is usually the case when working on a laptop. You might like to restrict the main interface window to just the results and command windows. These are the only essential parts of the main interface.
+
+# 3. Useful Stata shortcuts
+
+- `fn + up/down arrows` (OSX/WINDOWS) when in the command window. This retreives previously-run Stata commands
+
+- `SHIFT+CMD+D` (OSX) / `CTRL+D` (WINDOWS) when in .do file editor. This runs the do file.
+
+- `SHIFT+up/down arrows` (OSX/WINDOWS) when in .do file editor. This is how you can quickly highlight sections of code to run. You can then use the above command to run this in part of the .do file in isolation
+
+- `TAB` (OSX/WINDOWS)  when in the command window. You can use this to autocomplete variable names and directories.
+
+# 4. .do file code layout
+
+The following two sections of code contain exactly the same commands:
+
+```
+use "fruitdat.dta"
+rename v1 fruit
+label variable fruit "Type of fruit"
+rename v2 sales
+rename v3 price
+label var sales "Sales (units)"
+label var price "Price ($)"
+sum price if fruit == "apple", det
+```
+
+
+```
+// load dataset
+use "fruitdat.dta"
+
+// name variables
+rename v1 fruit
+rename v2 sales
+rename v3 price
+
+// label variables
+label variable fruit "Type of fruit"
+label var sales "Sales (units, weekly)"
+label var price "Price ($)"
+
+// average price of apples
+sum price if fruit == "apple", det
+```
+
+The second output is structured logically, uses space to distinguish different tasks and provides comments. You should aim for this.
+
+# 5. Variable names and labels
+
+
+"There are only two hard things in Computer Science: cache invalidation and naming things." (Phil Karlton)
+
+Variable names should be:
+
+- Short and easy to type (i.e. not something like `SalesOfBananas_27_v1')
+
+- Informative (i.e. not something like tempvar29)
+
+A few example variable names:
+
+- earn
+
+- sales
+
+- treatment
+
+Use variable labels to fully specify what each variable represents:
+
+- "Earnings in 1,000$"
+
+- "Sales in $ per day"
+
+- "=1 if received employment training"
+
+# 6. Conditional statements
+
+We have previously used the `if` command to perform an operation on a subset of the data. For example:
+
+```
+sum sales if fruit == "banana"
+```
+
+This is a ***conditional statement*** in which the condition is an equality (`==`).
+
+We could also use an inequality condition. This command sums sales for all observations for whom price is less than 5:
+
+
+```
+sum sales if price < 5
+```
+
+We can also chain conditions as follows:
+
+```
+sum sales if fruit == "banana" & price < 5
+```
+
+This will give sales for all bananas with a price under 5. 
+
+The full set of conditions is:
+
+![Conditional statements in Stata](conditionals.png){width=100%}
+

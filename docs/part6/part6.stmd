@@ -1,0 +1,61 @@
+% Lecture 6: Matching estimators and propensity scores
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
+
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm every Friday (Bass B312)
+
+## 1. Matching estimators
+
+Lets first load a Stata-provided dataset:
+
+	use http://www.stata-press.com/data/r15/cattaneo2.dta
+
+Using this dataset, we would like to estimate the effect of mother smoking (`mbsmoke`) on birthweight (`bweight`). A first way to do this is the now-familiar t-test:
+
+	ttest bweight, by(mbsmoke)
+
+Birthweights in the non-smoker group are higher than in the smoker group, and the difference is statistically significant.
+
+However, there could be omitted factors. Perhaps younger mothers are more likely to smoke, and are also more likely to have children with low birthweight irrespective of smoking.
+
+Given this, we estimate a multivariate regression, adding control variables for age, marital status and whether or not the mother visited a doctor in the first trimester of pregnancy:
+
+	reg bweight mbsmoke fage mage mmarried prenatal1 
+
+The coefficient on `mbsmoke` is lower in magnitude, still negative and statistically significant.
+
+An alternative approach is to use a matching estimator. We can implement this in Stata by using the `teffects nnmatch` command. 
+
+This will find the most-similar control group observation (non-smokers) for each treatment group observation (smokers), and vice-versa for treatment.
+
+	teffects nnmatch (bweight fage mage mmarried prenatal1) (mbsmoke)
+ 
+Here, `fage mage mmarried prenatal1` are the variables that will be used for the matching. The estimated treatment effect is still negative and statistically significant.
+
+## 2. Propensity scores
+
+A more sophisticated approach will use the propensity score. This is the predicted probability of an individual being in the treatment (smoker) or control (non-smoker) based on covariates. 
+
+To estimate the predicted probabilities (propensity scores), we can run a logistic (logit) regression of the treatment indicator on covariates:
+
+	logit mbsmoke fage mage mmarried prenatal1
+
+Inspecting the coefficients, we see that smoking does indeed depend on some of the covariates.
+
+Next we generate a new variable called `p_score` containing the predicted probabilities (propensity scores), according to our logistic regression:
+	
+	predict p_score
+
+Finally, we use this variable to match on
+
+	teffects nnmatch (bweight p_score) (mbsmoke)
+
+We could instead do the entire propensity score matching process using command `teffects psmatch`:
+
+	teffects psmatch (bweight) (mbsmoke fage mage mmarried prenatal1)
+
+
+

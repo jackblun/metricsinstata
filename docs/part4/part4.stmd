@@ -1,0 +1,102 @@
+% Lecture 4: Binned scatter plots and multivariate regression 
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
+
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+
+## 1. Reading Stata regression output
+
+Lets say we run the following regression in Stata:
+$$ y = \beta_0 + \beta_1 x + \beta_2 z + \epsilon $$
+
+![Regression output](regoutput.png){width=80%}
+
++ The `Coef.` column gives each estimated parameter, with `_cons` giving intercept $\beta_0$
+
++ Standard errors are given in `Std. Err.`
+
++ The remaining columns are p-values, t-statistics and confidence intervals
+
+
+## 2. Binned scatter plots
+
+Last week we learned how to create a ***scatter plot***.
+
+Unfortunately, with real data scatter plots often look very messy. Here is an example on some simulated data in which by construction there is a positive relationship between `x` and `y`:
+
+	// set directory
+	cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 4/markdown"
+
+	// set seed
+	set seed 123
+
+	// simulate data
+	clear
+	set obs 1000
+	gen x = rnormal(0,0.1)
+	gen z = 0.3*(x) + rnormal(0,0.5)
+	gen y = x + 0.5*(z) + rnormal(0,0.5)
+
+	// scatter plot
+	twoway scatter y x
+	graph export "scatter.png", replace
+
+![Scatter plot](scatter.png){width=80%}
+
+A great recent package tackles this problem by grouping data before plotting. The package is called ***binscatter*** and here is what it looks like with the same data:
+
+	// binned scatter plot
+	binscatter y x
+	graph export "binscatter.png", replace
+
+![Binned scatter plot](binscatter.png){width=80%}
+
+You will need to install it using command `ssc install binscatter` before using it.
+
+## 3. Storing estimates
+
+Oftentimes we would like to estimate something, then use that estimate in a later command. 
+
+One approach is to inspect the output and write it down directly:
+
+	sum x
+	gen x_above_mean = 0
+	replace x_above_mean = 1 if  x >= .002
+
+This works, but is likely to lead to errors and will be incorrect if your data changes.
+
+A better approach is to store the estimate then retrieve it as follows:
+
+	sum x
+	drop x_above_mean
+	gen x_above_mean = 0
+	replace x_above_mean = 1 if x >= r(mean)
+
+How did I know the mean was stored as `r(mean)`? I consulted the documentation for the `summarize` command by typing `help summarize`:
+
+![Stored results after `summarize`](helpsum.png){width=80%}
+
+In general, ***hard-coding numbers into code is a bad idea***.
+
+## 4. Making publication-quality graphs
+
+Stata graphs are ugly by default:
+
+![Ugly scatter plot](scatter.png){width=80%}
+
+By adding some additional options, we can make much nicer looking graphs ready for presentations / publication:
+
+	// scatter plot
+	twoway scatter y x, graphregion(color("white"))  mcolor(black%50) ///
+	xtitle("Sales of bananas") ytitle("Sales of apples") ///
+	title("Sales last summer", color("black"))	
+	graph export "scatterclean.png", replace
+
+![Nice-looking scatter plot](scatterclean.png){width=80%}
+
+
+
+

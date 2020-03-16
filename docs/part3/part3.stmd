@@ -1,0 +1,67 @@
+% Lecture 3: Scatter plots and regression 
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
+
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+
+# 1. Scatter plots
+
+So far we have seen ***histograms*** and ***box plots***. A third useful plot to draw is a ***scatter plot***. 
+
+Scatter plots are very common when you would like to see the relationship between two continuous variables. 
+
+First I set up my workspace and simulate some data:
+
+	// set directory
+	cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 3/markdown"
+
+	// set seed
+	set seed 123
+
+	// simulate data
+	clear
+	set obs 1000
+	gen x = rnormal(0,0.1)
+	gen z = 0.3*(x) + rnormal(0,0.1)
+	gen y = x + 0.5*(z) + rnormal(0,0.1)
+
+I have three variables, and would like to plot the relationship between `y` and `x`. 
+
+The command for this is `twoway scatter` followed by the y-axis variable then the x-axis variable. Here is an example:
+
+	// scatter plot
+	twoway scatter y x
+	graph export "scatterplot.png", replace
+
+![Scatter plot](scatterplot.png){width=80%}
+
+# 2. Simple regression in Stata
+
+The Stata command for regression is `regress` or `reg` for short. Here is a regression of `y` on `x` in our simulated data:
+
+	regress y x
+
+The slope estimate is 1.170, with a standard error of 0.037. The slope is statistically significant, with a p value of <0.01.
+
+We can add the fitted line on the graph as follows:
+
+	twoway (scatter y x) (lfit y x)
+	graph export "scatterplot_lfit.png", replace
+
+![Scatter plot](scatterplot_lfit.png){width=80%}
+
+# 3. Multivariate regression in Stata
+
+If we want to include more variables on the right hand side of a regression, we just add them to the end of the regression command. Here I estimate a regression of `y` on `x` and `z` together:
+
+	// run regression
+	reg y x z
+
+Both `x` and `z` are highly statistically significant. 
+
+As with previous commands, options can be added and the sample can be limited. Here I subset to those with a negative value for `z` and use robust standard errors:
+
+	reg y x z if z < 0, robust

@@ -1,0 +1,170 @@
+% Lecture 7: IV, dummy variables, F-tests and Macros
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
+
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm every Friday (Bass B312) **NOT THIS WEEK**
+
+## 0. Preliminaries
+
++ Thank you for your feedback.
+
++ Please come to office hours / section, particularly if you are struggling with the material. If you cannot make the sessions then send me an email and we can meet.
+
++ The section this Friday is rescheduled to next Monday at 2.30pm in Encina West 202.
+
++ I will arrange one or more review sessions in the final week of classes before the take-home final.
+
+## 1. Instrumental variables
+
+We can use `ivregress` to estimate an instrumental variables regression.
+
+Returning to the problem of estimating the **impact of maternal smoking on child birthweight**.
+
+Lets say we are worried that even with control variables, we cannot estimate this causal impact.
+
+Let us assume that we have access to data on **cigarette prices by state**, which vary due to tax differences. Since we do not have this variable, I simulate it:
+
+	use "http://www.stata-press.com/data/r15/cattaneo2.dta", clear
+	gen price = -mbsmoke + rnormal(0,1)
+
+We want to use `price`, which represents state-level cigarette prices, as an **instrumental variable** for mother smoking. The argument is that cigarette price affects mother smoking behavior, but does not affect child birthweight through any other mechanism.
+
+The command to do this is:
+
+	ivregress 2sls bweight (mbsmoke = price)
+
+`bweight` is the outcome, `mbsmoke` is the variable we want to instrument for, and `price` is the instrumental variable.
+
+We see that using the instrumental variable strategy, smoking has a statistically significant negative impact on birthweight.
+
+We typically include a set of controls as follows:
+
+	ivregress 2sls bweight medu fage fedu mmarried mhisp fhisp foreign birthmonth (mbsmoke = price)
+
+The effect persists when controls are included.
+
+## 2. Dummy variables
+
+A dummy variable is just an indicator which equals 1 if a certain condition is satisfied. In previous problems, 'treatment' has been a dummy variable. 
+
+Sometimes we have the choice of whether to include a variable as a continuous variable or as a series of dummies.
+
+For example, we could regress birthweight on mothers age as follows, by including it as a continuous predictor:
+
+	use "http://www.stata-press.com/data/r15/cattaneo2.dta", clear
+	keep if mage >= 18 & mage <=35
+ 
+	reg bweight mage
+
+	twoway lfit bweight mage, lcolor(black) ///
+	graphregion(color(white)) 
+	graph export "linear.png", replace
+
+The fitted model looks like this:
+
+![](linear.png){width=80%}
+
+We could also regress birthweight on a series of dummies, with each dummy representing a single value of mother's age. We do this by adding `i.` in front of the variable.
+
+	reg bweight i.mage
+
+The next section of code generates a plot of the coefficients.
+
+	regsave
+
+	gen lower = coef - 1.96*stderr
+	gen upper = coef + 1.96*stderr
+
+	gen mage = substr(var,1,2)
+	destring mage, replace force
+	drop if mage < 20
+	drop if mage == .
+	twoway (scatter coef mage, mcolor(black)) ///
+	(rcap lower upper mage, lcolor(black%50)), ///
+	graphregion(color(white)) ///
+	legend(off) ytitle("Coefficient")
+	graph export "dummies.png", replace
+
+![](dummies.png){width=80%}
+
+This allows a much **more flexible relationship**, but requires quite a lot of data.
+
+## 3. F-tests
+
+Let us consider the case where we are investigating the predictors of child birthweight.
+
+We first run a regression of birthweight on a set of covariates:
+
+	use "http://www.stata-press.com/data/r15/cattaneo2.dta", clear
+	reg bweight mage medu fage fedu mmarried mhisp fhisp foreign birthmonth 
+
+We can see that a number of the predictors are significant, but some are not.
+
+We might want to test the null hypothesis that **all** of the coefficients are zero, rather than inspecting them individually.
+
+We can do this using the following the regression with a `test` command, followed by the covariates:
+
+	test mage medu fage fedu mmarried mhisp fhisp foreign birthmonth 
+
+We reject the null hypothesis. The coefficients are jointly different to zero.
+
+If testing with dummy coefficients, they are denoted by their level (number), a period, then the variable name. For example testing the coefficient on an education dummy where education equals 4, the test would be `test 4.educ`.
+
+
+## 4. Macros
+
+A macro is a way to store something in memory. They come in two forms: local or global. Here we only look at local macros. Locals only exist in the current context, meaning that you need to define them in your .do file each time you want to use them.
+
+### 4.1 Storing text in macros
+
+Lets first look at an example where we want to run a set of regressions with the same control variables. Rather than copy and pasting, we can store in a macro as follows:
+
+```
+local controls age educ male
+```
+
+You can then include these controls in a set of regressions. Note the use of the backtick when calling the local.
+
+
+```
+reg earnings `controls'
+reg earnings `controls' if lagged_earnings < 20
+reg earnings `controls' if age >= 20
+```
+
+This is equivalent to:
+
+```
+reg earnings age educ male
+reg earnings age educ male if lagged_earnings < 20
+reg earnings age educ male if age >= 20
+```
+
+This makes coding a lot easier. It reduces repetition and makes it easier to go back and change things for multiple lines of code
+
+### 4.2 Storing results in macros
+
+Another type of macro which we saw earlier in the course is used to store results. This type of macro tells Stata to evaluate whatever you put on the right hand side of `local name = XYZ`. That number will then be stored as a macro.
+
+Heres an example where we store some results from a regression in a local macro. Note the difference between including the equals sign or not.
+
+	sysuse auto, clear
+
+	regress mpg weight
+
+	local rsqf e(r2)
+
+	local rsqv = e(r2)
+
+	display `rsqf'       // this gives the current R-squared
+
+	display `rsqv'       // this gives the same
+
+	regress mpg weight foreign
+
+	display `rsqf'       // the gives the new R-squared
+
+	display  `rsqv'       // this gives the old R-squared

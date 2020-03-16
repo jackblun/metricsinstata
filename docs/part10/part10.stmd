@@ -1,0 +1,102 @@
+% Lecture 10: Synthetic control methods and notes on the final
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
++ My (virtual) office hours this week: 
++ 8.30 - 10.30am Thursday
++ 4.30 - 6.30pm Wednesday (Not on Thursday)
++ 2.30 - 3.20pm Friday
+
+h2 {
+  color: green;
+}
+
+<span style="color: black;">
+
+1. [Introduction](#introduction)
+ 2. [Some paragraph](#paragraph1)
+1. [Sub paragraph](#subparagraph1)
+3. [Another paragraph](#paragraph2)
+
+## 1. Synthetic controls <a name="introduction"></a>
+
+### 1.1 Setup
+
+In this document I will demonstrate how to apply synthetic control methods in Stata.
+
+You first need to install a package using command `ssc install synth`.
+
+I am going to demonstrate using the `smoking` dataset. This contains state-year cigarette sales per capita, as well as some control variables.
+
+We will use this data to assess California's anti-smoking legislation introduced in 1989. I first load the data.
+
+	cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 10/markdown/"
+	use smoking
+
+We will construct a "synthetic California" from the other states, then compare this synthetic California to actual California.
+
+Before using the `synth` command, we have to tell Stata which variable is our "id" variable and which is our time variable:
+
+	tsset state year
+
+The data must be "long", which your data for the problem set will already be.
+
+### 1.2 Applying synthetic controls
+
+Next I run the synthetic control model:
+
+	synth cigsale beer(1984(1)1988) lnincome retprice age15to24 cigsale(1988) ///
+	cigsale(1980) cigsale(1975), trunit(3) trperiod(1989) figure
+	graph export "fig.png", replace
+
+The first variable is the outcome variable. The next ones are the predictors, which are sometimes indexed by particular years to tell Stata to average over those years rather than all years. The default for you should be to just average over all years.
+
+The `trunit(3)` tells Stata that the treated state is California (which is coded as `3`). This value should relate to the id variable set in the `tsset` command used earlier. 
+
+We also tell Stata when the treatment occurred (`trperiod(1989)`). This should align with the time variable set in `tsset`.
+
+We also tell Stata to generate a figure using the `figure` option, which you should do for the problem set.
+
+We see that the synthetic control is constructed from Colorado, Connecticut, Nevada and Utah. According to the figure generated below, it looks like the policy reduced smoking.
+
+![Synthetic control example](fig.png){width=50%}
+
+One other thing to note is that you can give a `unitnames()` option to Stata which contains the names of the units (countries usually), which helps with the labelling.
+
+### 1.3 Inference and credibility
+
+Inference is more difficult in synthetic control than in previous cases, since there is only one treated unit. Instead, we use "placebo tests". To quote AJPS2015: "This alternative model of inference is based on the premise that our confidence that a particular synthetic control estimate reflects the impact of the intervention under scrutiny would be severely undermined if we obtained estimated effects of similar or even greater magnitudes in cases where the intervention did not take place." 
+
+The basic idea with these tests is that we pretend that the treatment struck a different unit or the same unit at a different time. We then compare the results of these placebo treatments to our actual treatment.
+
+In the problem set please discuss this, but I will not expect you to implement it in the Stata code. If you would like to implement, I would also suggest looking at the `synth_runner` package, but this is not neccessary for the purpose of the assignment.
+
+When discussing synthetic control methods, you want to consider the following:
++ How well does the synthetic version of the treated unit match the actual treated unit in the pre-period?
++ How plausible are the chosen units which are used to construct the counterfactual? For example, in a cross country study where we investigate the impact of Coronavirus on the Italian economy, would it make sense if New Zealand (very far away) were used to generate the synthetic control?
++ Could it be that the treatment actually affected some of the control areas? These types of spillover effects would lead to a biased estimate. (See the discussion in AJPS2015 page 10)
+
+## 2. Final project
+
+For the final project, we would like to see you demonstrate that you have taken away some of the key topics discussed in the course and are able to apply them to a current policy question. 
+
+A "pre-analysis" plan is your plan for a research project. You might like to imagine that you are writing this for a funding body who you would like to convince to fund the project. Imagine that the body is made up of experts in applied econometrics, so you will be fine to use technical language and should be thorough / precise.
+
+As with the assignments, there is no one correct answer to the question. There are lots of ways of answering this which are equally valid. My reccomendation would be to start very simple and move from there.
+
+The report needs to show that you have thought clearly about the research question are able to link it to class material. It should involve the following:
+
+- What type of data would you need? What will be the unit of observation? Will there be a time element or will it just be cross-sectional analysis? What would be the important control variables you want to have?
+
+- What type of methods wouldn't work? Why not? This is your opportunity to bring in a broader set of methods that we have covered and discuss why these can't be used here.
+
+- Propose one or more methods which could work and discuss how these methods would be applied.
+
+- Discuss the problems with your methods. Are there any issues with credibility? (There always are) 
+
+- How would you demonstrate robustness?
+
+We do not expect you to be an expert on Brexit and we will not mind if some of the institutional details are perfect. Rather, we expect you to be able to link the event to the methods covered in the course.
+
+</span>

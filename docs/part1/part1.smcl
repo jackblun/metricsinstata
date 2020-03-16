@@ -1,0 +1,225 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}16 Mar 2020, 17:32:10
+{txt}
+{com}. //_1
+. /* Lecture 1
+> PUBLPOL 330D Winter 2020
+> Jack Blundell 
+> */
+. //_2
+. /*
+> Worked example of analysis of lalonde 1986 data.
+> Structure:
+> 0. Setup
+> 1. Import raw data
+> 2. Clean data
+> 3. Explore data
+> 4. Test for differences in means by group 
+> */    
+. //_3
+. clear
+{txt}
+{com}. //_4
+. set more off
+{txt}
+{com}. //_5
+. cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 1/markdown"
+{res}/Users/jack/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 1/markdown
+{txt}
+{com}. //_6
+. // capture log close
+. //_7
+. //log using "lecture1log", replace
+. //_8
+. import delimited "lalonde_experiment.txt", delimiter(" ", collapse)
+{res}{text}(3 vars, 446 obs)
+
+{com}. //_9
+. drop v1
+{txt}
+{com}. //_10
+. rename v2 t
+{res}{txt}
+{com}. rename v3 y
+{res}{txt}
+{com}. //_11
+. label variable t "Treatment"
+{txt}
+{com}. label variable y "Earnings ($1,000's)"
+{txt}
+{com}. //_12
+. describe
+
+{txt}Contains data
+  obs:{res}           446                          
+{txt} vars:{res}             2                          
+{txt} size:{res}         4,460                          
+{txt}{hline}
+              storage   display    value
+variable name   type    format     label      variable label
+{hline}
+{p 0 48}{res}{bind:t              }{txt}{bind: str6    }{bind:{txt}%9s       }{space 1}{bind:         }{bind:  }{res}{res}Treatment{p_end}
+{p 0 48}{bind:y              }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Earnings ($1,000's){p_end}
+{txt}{hline}
+Sorted by: 
+{res}     Note: Dataset has changed since last saved.
+{txt}
+{com}. //_13
+. destring t, replace force
+{txt}t: contains nonnumeric characters; {res}replaced {txt}as {res}byte
+{txt}(1 missing value generated)
+{res}{txt}
+{com}. //_14
+. des
+
+{txt}Contains data
+  obs:{res}           446                          
+{txt} vars:{res}             2                          
+{txt} size:{res}         2,230                          
+{txt}{hline}
+              storage   display    value
+variable name   type    format     label      variable label
+{hline}
+{p 0 48}{res}{bind:t              }{txt}{bind: byte    }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Treatment{p_end}
+{p 0 48}{bind:y              }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Earnings ($1,000's){p_end}
+{txt}{hline}
+Sorted by: 
+{res}     Note: Dataset has changed since last saved.
+{txt}
+{com}. //_15
+. generate missing_y = 0
+{txt}
+{com}. replace missing_y = 1 if y == .
+{txt}(1 real change made)
+
+{com}. //_16
+. tabulate missing_y
+
+  {txt}missing_y {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          0 {c |}{res}        445       99.78       99.78
+{txt}          1 {c |}{res}          1        0.22      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        446      100.00
+{txt}
+{com}. //_17
+. drop if missing_y == 1
+{txt}(1 observation deleted)
+
+{com}. //_18
+. save "lalonde_clean.dta", replace
+{txt}file lalonde_clean.dta saved
+
+{com}. //_19
+. use "lalonde_clean.dta", clear
+{txt}
+{com}. //_20
+. summarize y
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 11}y {c |}{res}        445    5.300762     6.63149          0    60.3079
+{txt}
+{com}. //_21
+. sum y, detail
+
+                     {txt}Earnings ($1,000's)
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}        0              0
+{txt} 5%    {res}        0              0
+{txt}10%    {res}        0              0       {txt}Obs         {res}        445
+{txt}25%    {res}        0              0       {txt}Sum of Wgt. {res}        445
+
+{txt}50%    {res}   3.7018                      {txt}Mean          {res} 5.300762
+                        {txt}Largest       Std. Dev.     {res}  6.63149
+{txt}75%    {res}   8.1247        34.0993
+{txt}90%    {res}   12.804        36.6469       {txt}Variance      {res} 43.97666
+{txt}95%    {res}  16.9882        39.4835       {txt}Skewness      {res} 2.622092
+{txt}99%    {res}  26.8176        60.3079       {txt}Kurtosis      {res} 16.09979
+{txt}
+{com}. //_22
+. tab t
+
+  {txt}Treatment {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          0 {c |}{res}        260       58.43       58.43
+{txt}          1 {c |}{res}        185       41.57      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        445      100.00
+{txt}
+{com}. //_23
+. histogram y, width(1)
+{txt}(bin={res}61{txt}, start={res}0{txt}, width={res}1{txt})
+{res}{txt}
+{com}. graph export "histogram_y.png", width(500) replace
+{txt}(file histogram_y.png written in PNG format)
+
+{com}. //_24
+. sum y if t == 0
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 11}y {c |}{res}        260      4.5548    5.483835          0    39.4835
+{txt}
+{com}. sum y if t == 1
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 11}y {c |}{res}        185    6.349142    7.867401          0    60.3079
+{txt}
+{com}. //_25
+. graph box y, by(t)
+{res}{txt}
+{com}. graph export "boxplot_y_by_t.png", width(500) replace
+{txt}(file boxplot_y_by_t.png written in PNG format)
+
+{com}. //_26
+. ttest y, by(t)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}    260{col 22}   4.5548{col 34}  .340093{col 46} 5.483835{col 58} 3.885101{col 70}   5.2245
+       {txt}1 {c |}{res}{col 12}    185{col 22} 6.349142{col 34} .5784228{col 46} 7.867401{col 58} 5.207948{col 70} 7.490335
+{txt}{hline 9}{c +}{hline 68}
+combined {c |}{res}{col 12}    445{col 22} 5.300762{col 34} .3143628{col 46}  6.63149{col 58} 4.682939{col 70} 5.918586
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22}-1.794341{col 34} .6328533{col 58}-3.038109{col 70}-.5505736
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res} -2.8353
+{txt}Ho: diff = 0                                     degrees of freedom = {res}     443
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}0.0024         {txt}Pr(|T| > |t|) = {res}0.0048          {txt}Pr(T > t) = {res}0.9976
+{txt}
+{com}. //_27
+. estpost ttest y, by(t)
+
+{txt}{space 0}{space 0}{ralign 12:}{space 1}{c |}{space 1}{ralign 9:e(b)}{space 1}{space 1}{ralign 9:e(count)}{space 1}{space 1}{ralign 9:e(se)}{space 1}{space 1}{ralign 9:e(t)}{space 1}{space 1}{ralign 9:e(df_t)}{space 1}{space 1}{ralign 9:e(p_l)}{space 1}{space 1}{ralign 9:e(p)}{space 1}{space 1}{ralign 9:e(p_u)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{space 0}{ralign 12:y}{space 1}{c |}{space 1}{ralign 9:{res:{sf:-1.794341}}}{space 1}{space 1}{ralign 9:{res:{sf:      445}}}{space 1}{space 1}{ralign 9:{res:{sf: .6328533}}}{space 1}{space 1}{ralign 9:{res:{sf: -2.83532}}}{space 1}{space 1}{ralign 9:{res:{sf:      443}}}{space 1}{space 1}{ralign 9:{res:{sf: .0023938}}}{space 1}{space 1}{ralign 9:{res:{sf: .0047875}}}{space 1}{space 1}{ralign 9:{res:{sf: .9976062}}}{space 1}
+
+{space 0}{space 0}{ralign 12:}{space 1}{c |}{space 1}{ralign 9:e(N_1)}{space 1}{space 1}{ralign 9:e(mu_1)}{space 1}{space 1}{ralign 9:e(N_2)}{space 1}{space 1}{ralign 9:e(mu_2)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{space 0}{ralign 12:y}{space 1}{c |}{space 1}{ralign 9:{res:{sf:      260}}}{space 1}{space 1}{ralign 9:{res:{sf:   4.5548}}}{space 1}{space 1}{ralign 9:{res:{sf:      185}}}{space 1}{space 1}{ralign 9:{res:{sf: 6.349142}}}{space 1}
+
+{com}. esttab using "ttest_y_by_t.rtf", replace
+{res}{txt}(output written to {browse  `"ttest_y_by_t.rtf"'})
+
+{com}. //_28
+. //log close
+. //_^
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}16 Mar 2020, 17:32:16
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

@@ -1,0 +1,99 @@
+% Lecture 8: Regression discontinuity
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm every Friday (Bass B312) 
+
+## 0. Set up simulated dataset
+
+Just for the purpose of this tutorial, I first build a simulated dataset
+
+	clear
+	set obs 10000
+	set seed 123
+	gen test_score = runiform(0,100)
+	gen p_degree = 0 + test_score/400
+	replace p_degree = 0.5 + test_score/400 if test_score >= 70
+	gen degree_rnum = runiform(0,1)
+	gen degree = 0
+	replace degree = 1 if degree_rnum < p_degree
+
+	gen earnings = rnormal(30,1)
+	replace earnings = earnings + 3 if degree == 1
+
+## 1. (Fuzzy) regression discontinuity
+
+We would like to assess the earnings returns to getting a degree.
+
+The setting is that there is a standardized test which determines entry into college.
+
+There is a threshold of 70, above which everone gets an offer.
+
+For those who get a score below 70, there are still routes into college but it is significantly less likely.
+
+This is a textbook fuzzy regression discontinuity setting.
+
+We will use the command `rd`, which you will have to install using `ssc install`.
+
+Lets first plot the probability of obtaining a degree over test score.
+
+	twoway lpoly degree test_score, graphregion(color(white)) ///
+	ytitle("Share obtaining degree") ///
+	xtitle("Test score")
+	graph export "poly_fit_degree.png", replace
+
+![Test scores and degree probability](poly_fit_degree.png){width=80%}
+
+Next I use the `rd` command to estimate the boost in the probability of obtaining a degree around the threshold of 70.
+
+	rd degree test_score, z0(70)
+
+We estimate that reaching the threshold increases the probability by 59 percentage points. The three different results correspond to different bandwidths. I choose the first one somewhat arbitrarily.
+
+We can also plot earnings by test score:
+
+	twoway lpoly earnings test_score, graphregion(color(white)) ///
+	ytitle("Earnings") ///
+	xtitle("Test score")
+	graph export "poly_fit_earnings.png", replace
+
+![Test scores and earnings](poly_fit_earnings.png){width=80%}
+
+Next I use the `rd` command to estimate the boost in earnings around the threshold of 70.
+
+	rd earnings test_score, z0(70)
+
+We estimate that reaching the threshold increases the probability by 1.85.
+
+Now I run the full regression discontinuity.
+
+This means that we use the test score threshold to get variation in degrees, and then use that variation to find out the earnings return to a degree:
+
+	rd earnings degree test_score, z0(70)
+
+We estimate that getting a degree increases earnings by 3.2, again arbitrarily choosing the first bandwidth.
+
+The 'numer' gives the effect on earnings. The 'denom' gives the effect on degrees. The 'wald' gives the implied effect of degrees on earnings.
+
+## 2. Practical concerns
+
+### 2.1 Plotting
+
+You can also plot using the `rdplot` command (from `ssc install rdrobust`), which will give a better idea for what exactly RD is doing:
+
+	rdplot earnings test_score, c(70)
+	graph export "rdplot.png", replace
+
+![Test scores and earnings](rdplot.png){width=80%}
+
+### 2.2 Checking other covariates
+
+A common thing to do in regression discontinuity which will add credibility to your estimate is to show that there is no change in other characteristics around the threshold. You can do this by replace the outcome variable in the `rdr` command with an alternative characteristic that you'd like to test for.
+
+## 3. Problem set specific help
+
++ The dataset provided is on third graders. You can find the relevant discontinuity (cutoff) by checking Section III of the paper.
+
++ You may also want to set the cutoff at 0.01 below the actual cutoff infered from the paper, again because the data is very discrete

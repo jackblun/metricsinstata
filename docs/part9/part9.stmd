@@ -1,0 +1,158 @@
+% Lecture 8: Panel data and difference-in-difference designs
+% Jack Blundell
+% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+
++ My email: jackblundell@stanford.edu
++ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
++ Section (further office hours): 2.30 - 3.20pm every Friday (Bass B312) 
+
+## 0. Preliminaries
+
+The will be **two** revision sessions next week, on top of the usual office hour and section. These are additional opportunities to come to me with any questions about the course. I will not be able to answer very specific questions about the take-home final.
+
+These will be Wednesday and Thursday afternoon 4.30-6.30pm in Bass B312.
+
+## 1. Panel data
+
+Up until now, most of the data we have seen has been **cross-sectional**. This means that there has typically been no time dimension.
+
+With panel data, we observe multiple units for multiple periods.
+
+This extends the family of methods we can use.
+
+Other types of data are **repeated cross section** in which we have multiple time periods but do not observe the same individuals in each period, and **time series** in which we have a single unit and multiple time periods.
+
+## 2. Wide and long data
+
+Panel data can be stored in two forms.
+
+**Wide** gives each unit (individual, firm, school) a row in the data. The variables then refer to a particular characteristic in a particular period.
+
+For example, lets assume we observe the wages for a group of individuals for two periods. The data in **wide** form will look something like:
+
+![Wide data](wide.png){width=50%}
+
+This is saying that the wage for individual 1 is 10 in period 1 and 12 in period 2.
+
+The data can also be represented in **long** format as follows:
+
+![Long data](long.png){width=50%}
+
+Here, each unit-time observation gets its own row.
+
+Whether or not you want the data in wide or long data will depend on what you want to do with it.
+
+In the problem set, you start with **wide** data but the analysis is easier done on **long** data.
+
+Given this, you will have to use the `reshape` command to put the data into the correct format for analysis
+
+In the above example, if I wanted to turn the long data into wide data, I write:
+
+```
+reshape wide wage, i(id) j(t)
+```
+
+If I wanted to turn the wide data into long data, I write:
+
+```
+reshape long wage, i(id) j(t)
+```
+
+Reshaping data can be a bit fiddly. If stuck, I suggest you read the documentation carefully.
+
+## 3. Difference-in-differences
+
+### 3.1 Intro
+
+Perhaps the most common case when one uses panel or repeated cross-sectional data in applied econometrics is a difference-in-difference (DiD) design.
+
+I will illustrate how to apply DiD through an example.
+
+Lets consider the question of whether the US should welcome refugees. One argument used against this is that doing so will negatively affect employment rates of natives.
+
+Lets assume that we have individual-level data on the employment of 1,000 individuals in two states, Washington and Oregon. Let us also imagine that in 2016, Washington invited large numbers of refugees to settle in the state, whereas Oregon refused to accept any refugees. We have data from 2015 (before the policy) and 2017 (after the policy).
+
+Intuitively, we might expect to learn something by comparing employment in Washington and Oregon after the policy has been introduced. This is clearly flawed, as Washington and Oregon might have different employment levels for any number of reasons. It is easy to think of omitted variables which would bias such an analysis.
+
+As we have data from before the policy, we can in fact to much better than that. We can compare **changes** in employment between Washington and Oregon. This means that any time-constant differences in employment rates will be eliminated, potentially giving a cleaner comparison and a more credible causal estimate.
+
+By taking out time-constant differences, we can more plausible identify the causal effect of Washington's choice to let in the refugees.
+
+### 3.2 Set up simulated data
+
+Here I simulate some data.
+	
+	set seed 123
+	set obs 2000
+	// state names
+	gen state_name = "Oregon"
+	replace state_name = "Washington" if _n >= 1001
+	encode state_name, gen(state)
+	// time
+	gen t = 2015
+	replace t = 2017 if state == 1 & _n >= 501
+	replace t = 2017 if state == 2 & _n >= 1501
+	// simulate employment
+	gen cut = 0.7
+	replace cut = 0.8 if state == 1 & t == 2017
+	replace cut = 0.5 if state == 2 & t == 2015
+	replace cut = 0.7 if state == 2 & t == 2017
+	gen runif = runiform(0,1)
+	gen employed = 0
+	replace employed = 1 if runif <= cut
+
+### 3.3 Analysis
+
+In my dataset I have three variables. The first is an indicator for whether or not an individual works (`employed`). The second is a dummy indicating the individual's state (`state`). The third (`t`) represents the year. Recall that we have data for 2015 and 2017, and that the policy was introduced in 2016.
+
+A basic DiD estimate can be calculated just by calculating averages of employment rates in each state and in each period. These are the averages for Oregon: 
+
+	sum employed if t == 2015 & state == 1
+	sum employed if t == 2017 & state == 1
+
+These are the averages for Washington:
+
+	sum employed if t == 2015 & state == 2
+	sum employed if t == 2017 & state == 2
+
+The change over time for Oregon is 0.792 - 0.694 = 0.098.
+
+The change over time for Washington is 0.756 - 0.48 = 0.276.
+
+The difference between the two is 0.178. This is our difference-in-difference estimate.
+
+The DiD method can also be implemented by running a regression. This allows the addition of control variables and gives easy calculation of standard errors. For the problem set, I would recommend using this method.
+
+The equivalent regression is of employment on state dummies, a pre/post year dummy and an interaction between the two:
+
+	reg employed i.state##i.t
+
+The constant gives the employment rate when all dummies are switched to 0. In this case, this is the employment rate of Oregon in 2015.
+
+The interpretation of the coefficients is all in relation to this constant.
+
+The interpretation of the coefficients is as follows:
+
++ The first coefficient gives the difference in employment rates between Washington and Oregon in 2015. We see that Washington had a lower employment rate in this year.
+
++ The second gives the change in employment rates between 2015 and 2017 for Oregon. We see that employment in Oregon increased over this period.
+
++ The third gives the difference between the change in employment rates between 2015 and 2017 for Oregon and the change in employment rates between 2015 and 2017 for Washington. 
+
+Our DiD estimate is 0.178 and is highly significant. 
+
+We estimate that employment rates increased by 17.8 pp more in Washington between 2015 and 2017 than they did in Oregon for the same period. 
+
+Under certain assumptions, we estimate the effect of Washington's policy of letting in refugees to be a 17.8 pp increase in employment rates.
+
+### 3.4 Credibility
+
+The first crucial assumption behind DiD is **common trends**. The trends in the treatment and the control group outcomes in the absence of the policy must have been the same.
+
+What could violate this?
+
++ Any other policy difference between Oregon and Washington which affected employment rates and are not reflected in 2015 employment rates, for example any other state-level policy introduced in 2016.
+
+We also require the stable unit treatment value assumption (SUTVA). In fact this is true of all the methods we have used, but is particularly important in this example. This states that the policy being introduced in Washington didn't affect Oregon's outcomes.
+
+Is this plausible? We might think that migration may violate this. If individuals move away from Washington in response to the policy and settle in Oregon, Oregon's employment rate could be directly affected by the policy.
