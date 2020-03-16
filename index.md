@@ -4,7 +4,7 @@ The goal is to get you up and running with Stata as quickly as possible, streaml
 
 The course is designed for advanced undergraduates and graduate students with some background in Statistics / Econometrics. No coding experience is required. All datasets used are publicly available, so I would suggest running through each section, copying and running the code for yourself.
 
-The course is divided into 6 guided tutorials. Click on each section below to access the tutorial.
+The course is divided into 6 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
 
 1. [Introduction to Stata and Randomized experiments](part1.html)
 2. [Regression](part2.html)
