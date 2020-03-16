@@ -6,13 +6,13 @@ The course is designed for advanced undergraduates and graduate students with so
 
 The course is divided into 6 guided tutorials. Click on each section below to access the tutorial.
 
-1. Randomized experiments
-2. Regression 
-3. Matching
-4. Instrumental Variables
-5. Difference in differences
-6. Synthetic controls
+1. [Randomized experiments](part1.html)
+2. [Regression](part2.html)
+3. [Matching](part3.html)
+4. [Instrumental Variables](part4.html)
+5. [Difference-in-differences](part5.html)
+6. [Synthetic controls](part6.html)
 
 Each tutorial was created using the excellent [Stata Markdown](https://data.princeton.edu/stata/markdown), developed by Germán Rodríguez.
 
-This course is designed by [Jack Blundell](www.stanford.edu/~jackblun).
+This course is designed by [Jack Blundell](https://www.stanford.edu/~jackblun).
