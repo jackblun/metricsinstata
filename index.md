@@ -8,7 +8,7 @@ The course is divided into 10 guided tutorials, which are best done in sequence.
 
 1. [Introduction to Stata](part1.html)
 2. [Exploring and cleaning data](part2.html)
-3. [Plotting data](part3.html
+3. [Plotting data](part3.html)
 4. [Randomized experiments](part4.html)
 5. [Regression](part5.html)
 6. [Matching](part6.html)
