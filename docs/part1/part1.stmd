@@ -1,8 +1,6 @@
 % Part 1: Introduction to Stata
-% Jack Blundell (Stanford)
-% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
 
-# 1. Getting started with Stata
+## 1. Getting started with Stata
 
 Stata is a statistical package which is:
 
@@ -22,7 +20,7 @@ Stata is not:
 
 While R and Python are also valuable to learn, Stata remains the most-common programming language in empirical economics and is an excellent tool for learning and applying econometric methods. The majority of papers in applied economics include analysis using Stata and the majority of applied economists are comfortable using it.
 
-## 1.1 The Stata Interface
+### 1.1 The Stata Interface
 
 The Stata Interface consists of the following windows:
 
@@ -52,7 +50,7 @@ There are two ways to run code in Stata:
 
 While the first option is easy for one-off commands, as you become familiar with the software it is best to use .do files. .do files are opened in the do-file editor, which can be opened through File -> New. They are run either by clicking 'do' or by pressing CMD+SHIFT+d (OSX) or CTRL+d (Windows). 
 
-## 1.3 Finding help
+### 1.3 Finding help
 
 Perhaps the most important Stata command to know is `help`, which brings up Stata documentation. For example, typing `help regress` into the command window then hitting enter will bring up all documentation on the `regress` command in Stata:
 
@@ -60,12 +58,12 @@ Perhaps the most important Stata command to know is `help`, which brings up Stat
 
 See the end of these notes for further resources.
 
-# 2. Worked example: Lalonde (1986)
+## 2. Worked example: Lalonde (1986)
 
 
 Our application will be a classic paper in Labor economics (*LaLonde, Robert J. “Evaluating the Econometric Evaluations of Training Programs with Experimental Data.” The American Economic Review, 1986*). In this paper, LaLonde investigates the impact of a randomized employment program on earnings. 
 
-## 2.1 Starting a .do file
+### 2.1 Starting a .do file
 
 We can now start looking at an example .do file. A typical project consists of several (often several dozen) .do files each with hundreds of lines of code which are interlinked, but here we will just work from a single file.
 
@@ -119,7 +117,7 @@ The next command starts a new log:
 The command tells stata to `log` (create a log file containing results) and to save the file (`using`) as `lecture1log`. Any results generated will now end up in a `.smcl` log file in the main working directory. The `replace` option which follows will crop up several times in this example attached to numerous commands. It tells Stata to overwrite any existing file as required. Excluding `replace` will result in an error message if an overwrite is attempted.
 
 
-## 2.2 Loading data
+### 2.2 Loading data
 
 Stata datasets are denoted by ".dta". 
 
