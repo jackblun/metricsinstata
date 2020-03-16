@@ -6,7 +6,7 @@ The course is designed for advanced undergraduates and graduate students with so
 
 The course is divided into 6 guided tutorials. Click on each section below to access the tutorial.
 
-1. [Randomized experiments](part1.html)
+1. [Introduction to Stata and Randomized experiments](part1.html)
 2. [Regression](part2.html)
 3. [Matching](part3.html)
 4. [Instrumental Variables](part4.html)
