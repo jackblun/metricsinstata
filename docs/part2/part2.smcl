@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part2/part2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}17 Mar 2020, 17:47:19
+ {txt}opened on:  {res}17 Mar 2020, 21:16:29
 {txt}
 {com}. //_1
 . cd "~/git_repos/metricsinstata/docs/part2"
@@ -149,12 +149,43 @@ Sorted by:
 {hline 13}{c +}{hline 57}
 {space 8}re75 {c |}{res}        229    995.5063     1313.29          0   4923.263
 {txt}
+{com}. //_13
+. generate re75_re78 = re75 + re78
+{txt}
+{com}. label var re75_re78 "sum of re75 and re78"
+{txt}
+{com}. //_14
+. des
+
+{txt}Contains data from {res}nsw.dta
+{txt}  obs:{res}           722                          
+{txt} vars:{res}            11                          18 May 2012 09:35
+{txt} size:{res}        23,826                          
+{txt}{hline}
+              storage   display    value
+variable name   type    format     label      variable label
+{hline}
+{p 0 48}{res}{bind:data_id        }{txt}{bind: str14   }{bind:{txt}%14s      }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:treat          }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:age            }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:education      }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:black          }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:hispanic       }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:married        }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:nodegree       }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:re75           }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:re78           }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:re75_re78      }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}sum of re75 and re78{p_end}
+{txt}{hline}
+Sorted by: 
+{res}     Note: Dataset has changed since last saved.
+{txt}
 {com}. //_^
 . log close
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part2/part2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}17 Mar 2020, 17:47:24
+ {txt}closed on:  {res}17 Mar 2020, 21:16:34
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

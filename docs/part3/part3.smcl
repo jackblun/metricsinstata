@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part3/part3.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}17 Mar 2020, 17:47:24
+ {txt}opened on:  {res}17 Mar 2020, 21:16:35
 {txt}
 {com}. //_1
 . cd "~/git_repos/metricsinstata/docs/part3"
@@ -26,17 +26,39 @@
 {txt}(file box_re78_byt.png written in PNG format)
 
 {com}. //_5
-. sum re78 if treat == 1
+. sum re78 if treat == 1, det
 
-{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
-{hline 13}{c +}{hline 57}
-{space 8}re78 {c |}{res}        297    5976.352    6923.796          0   60307.93
+                            {txt}re78
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}        0              0
+{txt} 5%    {res}        0              0
+{txt}10%    {res}        0              0       {txt}Obs         {res}        297
+{txt}25%    {res} 549.2984              0       {txt}Sum of Wgt. {res}        297
+
+{txt}50%    {res} 4232.309                      {txt}Mean          {res} 5976.352
+                        {txt}Largest       Std. Dev.     {res} 6923.796
+{txt}75%    {res} 9381.295        26817.6
+{txt}90%    {res} 13626.04       34099.28       {txt}Variance      {res} 4.79e+07
+{txt}95%    {res} 17685.18       36646.95       {txt}Skewness      {res} 2.646437
+{txt}99%    {res} 34099.28       60307.93       {txt}Kurtosis      {res} 16.72786
 {txt}
-{com}. sum re78 if treat == 0
+{com}. sum re78 if treat == 0, det
 
-{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
-{hline 13}{c +}{hline 57}
-{space 8}re78 {c |}{res}        425    5090.048    5718.089          0   39483.53
+                            {txt}re78
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}        0              0
+{txt} 5%    {res}        0              0
+{txt}10%    {res}        0              0       {txt}Obs         {res}        425
+{txt}25%    {res}        0              0       {txt}Sum of Wgt. {res}        425
+
+{txt}50%    {res} 3746.701                      {txt}Mean          {res} 5090.048
+                        {txt}Largest       Std. Dev.     {res} 5718.089
+{txt}75%    {res} 8329.823       23483.45
+{txt}90%    {res} 12429.91       29408.04       {txt}Variance      {res} 3.27e+07
+{txt}95%    {res} 16328.96        30247.5       {txt}Skewness      {res} 1.569358
+{txt}99%    {res} 20942.24       39483.53       {txt}Kurtosis      {res} 6.963969
 {txt}
 {com}. //_6
 . twoway scatter re78 re75
@@ -54,7 +76,7 @@
 {com}. //_8
 . twoway scatter re78 re75, mcolor(blue%50) ///
 > graphregion(color(white)) ///
-> xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+> xtitle("Earnings in $1,000's (1978)") ytitle("Earnings in $1,000's (1975)")
 {res}{txt}
 {com}. //_9
 . graph export "scattermod_re75re78.png", replace
@@ -65,7 +87,7 @@
 > (scatter re78 re75 if treat == 0, mcolor(dkorange%50)), ///
 > legend(label(1 "Treatment") label(2 "Control")) ///
 > graphregion(color(white)) ///
-> xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+> xtitle("Earnings $1,000's (1978)") ytitle("Earnings $1,000's (1975)")
 {res}{txt}
 {com}. graph export "scattermodcombined_re75re78.png", replace
 {txt}(file scattermodcombined_re75re78.png written in PNG format)
@@ -75,7 +97,7 @@
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part3/part3.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}17 Mar 2020, 17:47:34
+ {txt}closed on:  {res}17 Mar 2020, 21:16:46
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

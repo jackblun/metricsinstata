@@ -4,7 +4,7 @@
 	
 clear
 	
-foreach i of numlist 5/5 {
+foreach i of numlist 1/3 {
 	cd "~/git_repos/metricsinstata/docs/part`i'"
 	markstat using "part`i'.stmd", bundle
 }

@@ -3,38 +3,31 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}17 Mar 2020, 17:47:17
+ {txt}opened on:  {res}17 Mar 2020, 21:16:28
 {txt}
 {com}. //_1
 . /* Lalonde analysis
 > Jack Blundell
-> */
-. //_2
-. /*
 > Worked example of analysis of lalonde 1986 data.
 > Structure:
 > 0. Setup
 > 1. Import data
 > 2. Rename and relabel variables
 > */    
-. //_3
+. //_2
 . clear
 {txt}
-{com}. //_4
+{com}. //_3
 . set more off
 {txt}
-{com}. //_5
+{com}. //_4
 . cd "~/git_repos/metricsinstata/docs/part1"
 {res}/Users/jack/git_repos/metricsinstata/docs/part1
 {txt}
-{com}. //_6
-. // capture log close
-. //_7
-. //log using "lecture1log", replace
-. //_8
+{com}. //_5
 . use "nsw.dta"
 {txt}
-{com}. //_9
+{com}. //_6
 . describe
 
 {txt}Contains data from {res}nsw.dta
@@ -58,16 +51,16 @@ variable name   type    format     label      variable label
 {txt}{hline}
 Sorted by: 
 
-{com}. //_10
+{com}. //_7
 . rename treat banana
 {res}{txt}
-{com}. //_11
+{com}. //_8
 . rename banana treat
 {res}{txt}
-{com}. //_12
+{com}. //_9
 . label variable treat "Treatment indicator"
 {txt}
-{com}. //_13
+{com}. //_10
 . des
 
 {txt}Contains data from {res}nsw.dta
@@ -92,14 +85,12 @@ variable name   type    format     label      variable label
 Sorted by: 
 {res}     Note: Dataset has changed since last saved.
 {txt}
-{com}. //_14
-. //log close
-. //_^
+{com}. //_^
 . log close
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}17 Mar 2020, 17:47:17
+ {txt}closed on:  {res}17 Mar 2020, 21:16:28
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

@@ -18,7 +18,7 @@ We learned in part 2 how to create a histogram:
 
 ![Histogram of 1975 earnings](hist_re75.png){width=70%}
 
-This is useful for inspecting the distribution of single continuous or ordinal variables. Here we will extend on this.
+This is useful for inspecting the distribution of single continuous or ordinal variables. In this tutorial we will learn how to generate a few other useful graphs and how to make them pretty enough for publication.
 
 ## 3. Box plots
 
@@ -31,14 +31,14 @@ Sometimes we would like to inspect the distribution of a continuous variable con
 
 From this we can see that the 25th percentile, median and 75th percentile of 1978 earnings are higher for the `treat = 1` group.
 
-We can achieve the same comparison by using the `sum` command with the `,det` option:
+We can achieve the same comparison by using the `sum` command with the `det` option:
 
-	sum re78 if treat == 1
-	sum re78 if treat == 0
+	sum re78 if treat == 1, det
+	sum re78 if treat == 0, det
 
 ## 4. Scatter plots
 
-Perhaps the most common type of plot to generate in applied econometrics is the scatter plot. This is used when we would like to inspect the relationship between two continuous variables. 
+Perhaps the most common type of plot in applied econometrics is the scatter plot. This is used when we would like to inspect the relationship between two continuous variables. 
 
 Lets make a scatter plot of `re78`, which represents 1978 earnings, on `re75`, which represents 1975 earnings.
 
@@ -47,22 +47,24 @@ Lets make a scatter plot of `re78`, which represents 1978 earnings, on `re75`, w
 
 ![1978 earnings and 1975 earnings](scatter_re75re78.png){width=70%}
 
-There may be something of a positive relationship here, but it is hard to tell, in part due to the skewness of the data and in part due to the many zeros.
+There may be something of a positive relationship here, but it is hard to tell, in part due to the skewness of the data and in part due to the many zeros. We would of course expect some positive relationship - those who earn more today are likely to be those who earned more 3 years ago.	
 
-When a scatter plot looks like this, a convenient tool is `binscatter`, which was recently developed.
+When a scatter plot looks like this, a convenient tool is `binscatter`, which was recently developed by [Michael Stepner](https://michaelstepner.com/).
 
 `binscatter` is our first example of a command which does not come bundled with Stata, but rather must be installed.
 
 Fortunately, this is very easy in Stata. Just type the command `ssc install binscatter` and the package will be installed for you. You only need to do this once on each machine. Most user-built Stata packages are available through this route.
 
-Lets try the scatter plot again:
+Lets try the scatter plot again, this time using `binscatter`:
 
 	binscatter re78 re75
 	graph export "binscatter_re75re78.png", replace
 
 ![1978 earnings and 1975 earnings](binscatter_re75re78.png){width=70%}
 
-Now we see far more of a clear positive relationship. The data has been grouped into quantiles based on the x-axis, and the displayed points are means within those bins. This is extremely useful, particularly when working with large datasets. The linear regression fit line has also been added to the graph by default.
+Now we see a clear positive relationship. 
+
+The data has been grouped into quantiles based on the x-axis, and the displayed points are means within those bins. This is extremely useful, particularly when working with large datasets. The linear regression fit line has also been added to the graph by default.
 
 ## 5. Customizing plots
 
@@ -70,7 +72,7 @@ The default plots in Stata are not the most attractive. Fortunately, you can cus
 
 	twoway scatter re78 re75, mcolor(blue%50) ///
 	graphregion(color(white)) ///
-	xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+	xtitle("Earnings in $1,000's (1978)") ytitle("Earnings in $1,000's (1975)")
 
 	graph export "scattermod_re75re78.png", replace
 
@@ -78,22 +80,25 @@ The default plots in Stata are not the most attractive. Fortunately, you can cus
 
 Note the use of `///`. This tells Stata to move to the next line of the .do file, as if the first line were to continue. This is useful if you have very long lines of code that would be difficult to read if left on one line.
 
+To see the full range of options, type `help twoway options`.
 
-## 6. Layering and customizing plots
+## 6. Layering
 
-Often it is desirable to layer plots. This is also very easy in Stata. In the following plot, I layer a scatter plot of `re78` on `re75` for those for whom `treat=1`, on top of the equivalent for `treat=0`.
+Often it is desirable to layer plots. This is also very easy in Stata. In the following plot, I layer a scatter plot of `re78` on `re75` for those with `treat=1`, on top of the equivalent for those with `treat=0`.
 
 
 	twoway (scatter re78 re75 if treat == 1, mcolor(blue%50)) ///
 	(scatter re78 re75 if treat == 0, mcolor(dkorange%50)), ///
 	legend(label(1 "Treatment") label(2 "Control")) ///
 	graphregion(color(white)) ///
-	xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+	xtitle("Earnings $1,000's (1978)") ytitle("Earnings $1,000's (1975)")
 	graph export "scattermodcombined_re75re78.png", replace
 
 ![1978 earnings and 1975 earnings by treatment status](scattermodcombined_re75re78.png){width=70%}
 
-Note that each graph is embedded in parentheses. It is possible to set options for each element of the plot, such as `mcolor(blue%50)` which sets the marker color for the first layer. It is also possible to set options for the combined plot, such as `graphregion(color(white))`.
+Note that each graph is embedded in parentheses. It is possible to set options for each element of the plot, such as `mcolor(blue%50)` which sets the marker color for the first layer. These options are set within the parentheses for a layer. 
+
+It is also possible to set options for the combined plot, such as `graphregion(color(white))`. These options come at the end of the command.
 
 ## 7. Other plots
 
