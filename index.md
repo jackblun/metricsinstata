@@ -1,4 +1,4 @@
-This is a short course showing you how to perform common methods applied econometrics in Stata. We will cover a set of methods including randomized experiments, instrumental variables and difference-in-difference strategies. 
+This is a short course showing you how to perform common applied econometric methods in Stata. After introducing you to Stata, we will cover a set of methods including randomized experiments, instrumental variables and difference-in-difference strategies. 
 
 The course is divided into 10 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
 
@@ -17,7 +17,7 @@ The course is divided into 10 guided tutorials, which are best done in sequence.
 
 The goal is to get you up and running with Stata as quickly as possible, streamlining content to the necessary components needed to start doing your own research in Stata.
 
-The course is designed for advanced undergraduates and graduate students with some background in Statistics / Econometrics. It is not designed as a stand-alone Econometrics course, but rather as a guide to applying common econometric tools in Stata. For the econometric concepts, see either Imbens and Rubin (2015) or Angrist and Pischke (2008).
+The course is designed for advanced undergraduates and graduate students with some background in statistics / econometrics. It is not designed as a stand-alone econometrics course, but rather as a guide to applying common econometric tools in Stata. For the econometric concepts, see either Imbens and Rubin (2015) or Angrist and Pischke (2008).
 
 No coding experience is required. All datasets used are publicly available, so I would suggest running through each section, copying and running the code for yourself.
 
