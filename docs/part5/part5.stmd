@@ -1,146 +1,60 @@
-% Lecture 5: Interactions in regressions and simplifying your code
-% Jack Blundell
-% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+% Part 5: Regression
 
-+ My email: jackblundell@stanford.edu
+## 1. Setup
 
-+ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
-+ Section (further office hours): 2.30 - 3.20pm every Friday (Bass B312)
+For this part, we will use a new dataset. We will be looking at data on education and earnings. The data is simulated and is found here.
 
-## 1. Interactions
+First, we set directories, load the data and take a look:
 
-Lets look at a model where we regress log earnings on education and gender:
+	cd "~/git_repos/metricsinstata/docs/part5"
+	
+	use "regdat.dta", clear
 
-$$ earnings = \beta_0 + \beta_1 educ + \beta_2 female + \epsilon $$
+	des
 
-$\beta_1$ will tell us how much log earnings increases for an additional year of education, conditional on gender.
+We see that we have 10,000 observations and four variables.
 
-But in this model we do not allow the relationship between earnings and education to vary by gender. It could be that men have a higher return to education than women. Here we are constraining the coefficient to be the same for both genders.
+We would like to use this data to assess the causal impact of getting a degree on earnings. This is an important policy question and has been the subject of a large body of research.
 
-We can relax this, potentially generating a better fit to the data. One approach would be to run the model seperately on men and women, then inspect the coefficients. The Stata code for this is
+## 2. T-test
 
-``` 
-reg earnings educ if female == 1
-reg earnings educ if female == 0
-```
+First off, we apply a t-test as we saw in the previous tutorial. We test the null hypothesis that average earnings among degree holders differ to those without degrees.
 
-However, we can also keep using all the data and do this directly by including an interaction term:
+	ttest earnings, by(degree)
 
-$$ earnings = \beta_0 + \beta_1 educ + \beta_2 female + \beta_3 educ*female + \epsilon $$
+We strongly reject the null hypothesis. Earnings are greater for those with degrees, and the difference is statistically significant with a p value < 0.0001.
 
-+ If $\beta_3$ = 0, there is no difference in returns to education across gender.
+## 3. Simple regression
 
-+ If $\beta_3$ > 0, women have a higher return than men.
+We next perform the same analysis using the folloing regression model:
 
-+ If $\beta_3$ = 0, men have a higher return than women.
+$$ earnings = \beta_0 + \beta_1 degree + \epsilon $$
 
-In Stata, we can include interactions as follows:
+The command is `regress`. The first variable is treated as the outcome variable.
 
-```
-reg earnings i.educ##i.female
-```
+	regress earnings degree
 
-The `i.` tells Stata that these are categorical variables. Replace this with `c.` if using a continuous variable.
+We see that having a degree is associated with an additional $8,572 in earnings, and that this difference is highly statistically significant. This is precisely consistent with the t-test performed above. The two are equivalent.
 
-*Important: When including interactions you always need to include the individual components. Stata does this for you.*
+## 4. Multivariate regression 
 
+We previously looked at randomized experiments, in which randomized assignment allowed us to move from statistical comparisons to causal statements.
 
-## 2. Reducing repetition
+Should we treat the above estimates as causal? Probably not, there are many **omitted variables** which could be biasing our estimates. Whether or not one obtains a degree is highly non-random and likely depends on many factors. These factors may in turn determine future earnings.
 
-One rule of coding is to *avoid repetition as much as possible*. Reducing repetition:
+Given this concern, to move towards a causal estimate we add **control variables**. In this case, our data limitations allow us only to control for two variables, parental wealth and sex. Parental wealth is likely a good control to include, since we know that this is likely to dictate both college attendance (perhaps through earlier educational investment) and future earnings (perhaps through networks). The same story holds for sex.
 
-+ makes mistakes less likely
+Therefore, we estimate the following model:
 
-+ makes it easier to update your code later
+$$ earnings = \beta_0 + \beta_1 degree + \beta_1 parentwealth + \beta_3 male + \epsilon $$
 
-+ makes code easier to read
+To implement this in Stata, we simply add them to the list of variables that follow the `regress` or `reg` command:
 
-## 2.1 The "by" command
+	reg earnings degree par_wealth male
 
-Lets say we want to inspect means by group. One option is to use `if`, as we have been doing:
+We see that the coefficient on degree is now smaller, consistent with the previous regression estimate being biased.
 
-```
-sum earnings if education == "high school"
-sum earnings if education == "college"
-sum earnings if education == "below high school"
-```
-
-A convenient alternative is to use `by`. You will get the same result from:
-
-```
-sort education
-by education: sum earnings
-```
-
-What is going on here?
-
-+ `sort` tells Stata to sort the data based on education. This is necessary before the command `by`.
-+ `by education: sum earnings` tells Stata to perform operation `sum earnings` separately for each value of `education`
-
-
-## 2.2 Looping over variables
-
-Lets say we have three variables `x`, `y` and `z`. Missing values for these variables are coded as -99 and we would like to drop all observations with any missing values.
-
-One valid approach is:
-
-```
-drop if x == -99
-drop if y == -99
-drop if z == -99
-```
-
-This involves a lot of repetition. When writing code, we try to avoid repetition where possible, keeping our scripts (.do files) as short as possible.
-
-We can instead use a loop which performs an operation to all variables in a `varlist`. A `varlist` is just a list of variable names:
-
-```
-foreach var of varlist x y z {
-	drop if `var' == - 99
-}
-```
-
-What is going on here?
-
-+ `foreach var of varlist` tells Stata we are going to run a block of code over multiple variables.
-+ `x y z` provides the variables
-+ `{` and `}` enclose the code to be performed
-+ variable names are substituted in place of `var`
-
-This is useful whenever we want to apply a single operation to multiple variables.
-
-## 2.3 Looping over numbers
-
-We can also loop over numbers held in a `numlist`.
-
-To illustrate, lets assume that we want to generate 10 new variables named var1, var2, var3 etc. We want all observations to have a value of 1 for all these new variables. The long-winded approach is:
-
-```
-gen var1
-gen var2
-gen var3
-gen var4
-gen var5
-gen var6
-gen var7
-gen var8
-gen var9
-gen var19
-```
-
-A better way to do this is:
-
-```
-foreach num of numlist 1:10 {
-	gen var`num' = 1
-}
-```
-
-What is going on here?
-
-+ `foreach num of numlist` tells Stata we are going to run a block of code over a list of numbers.
-+ `1/10` means that we are looping over all integers between 1 and 10
-+ `{` and `}` enclose the code to be performed
+If we are prepared to accept that there exist no further omitted variables, we estimate the effect of going to university on future earnings as a little over $5,200.
 
 
 

@@ -1,0 +1,63 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part4/part4.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}17 Mar 2020, 17:47:35
+{txt}
+{com}. //_1
+. cd "~/git_repos/metricsinstata/docs/part4"
+{res}/Users/jack/git_repos/metricsinstata/docs/part4
+{txt}
+{com}. //_2
+. use "nsw.dta", clear
+{txt}
+{com}. //_3
+. ttest re75, by(treat)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}    425{col 22} 3026.683{col 34} 252.2977{col 46}  5201.25{col 58} 2530.773{col 70} 3522.593
+       {txt}1 {c |}{res}{col 12}    297{col 22} 3066.098{col 34} 282.8697{col 46} 4874.889{col 58} 2509.407{col 70} 3622.789
+{txt}{hline 9}{c +}{hline 68}
+combined {c |}{res}{col 12}    722{col 22} 3042.897{col 34} 188.5423{col 46} 5066.143{col 58} 2672.739{col 70} 3413.054
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22}-39.41544{col 34} 383.4172{col 58}-792.1647{col 70} 713.3338
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res} -0.1028
+{txt}Ho: diff = 0                                     degrees of freedom = {res}     720
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}0.4591         {txt}Pr(|T| > |t|) = {res}0.9182          {txt}Pr(T > t) = {res}0.5409
+{txt}
+{com}. //_4
+. ttest re78, by(treat)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}    425{col 22} 5090.048{col 34}  277.368{col 46} 5718.089{col 58} 4544.861{col 70} 5635.236
+       {txt}1 {c |}{res}{col 12}    297{col 22} 5976.352{col 34} 401.7594{col 46} 6923.796{col 58} 5185.685{col 70} 6767.019
+{txt}{hline 9}{c +}{hline 68}
+combined {c |}{res}{col 12}    722{col 22} 5454.636{col 34} 232.7105{col 46} 6252.943{col 58} 4997.765{col 70} 5911.507
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22}-886.3037{col 34} 472.0863{col 58}-1813.134{col 70} 40.52635
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res} -1.8774
+{txt}Ho: diff = 0                                     degrees of freedom = {res}     720
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}0.0304         {txt}Pr(|T| > |t|) = {res}0.0609          {txt}Pr(T > t) = {res}0.9696
+{txt}
+{com}. //_^
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part4/part4.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}17 Mar 2020, 17:47:35
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

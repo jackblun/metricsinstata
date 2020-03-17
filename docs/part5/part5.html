@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+<style>
+/* CSS for Markstat 2.0 using Pandoc 2.0 */
+body{padding:14px 28px;}
+body, table {font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 16px; color: #606c71; line-height: 1.5}
+h1, h2, h3, h4 {font-weight: bold; color: #1e6bb8}
+h1 {font-size: 200%;}
+h2 {font-size: 150%;}
+h3 {font-size: 120%;}
+h4 {font-size: 100%; font-weight:bold}
+img.center {display:block; margin-left:auto; margin-right:auto}
+.small{font-size:8pt;}
+a {color: black;}
+a:visited {color: #808080;}
+a.plain {text-decoration:none;}
+a.plain:hover {text-decoration:underline;}
+.em {font-weight:bold;}
+pre, code {font-family: "lucida console", monospace; background-color:#DCDCDC; color:black;}
+pre.stata {font-size:16px; line-height:16px;}
+pre {padding:8px; border:1px solid #c0c0c0; border-radius:8px; background-color:#DCDCDC;}
+code {color:#1e6bb8; background-color:#fafafa;}
+pre code { color:black; background-color:#DCDCDC}
+/* Added for Pandoc */
+figure > img, div.figure > img {display:block; margin:auto}
+figcaption, p.caption {text-align:center; font-weight:bold; color:#1e6bb8;}
+h1.title {text-align:center; margin-bottom:0}
+p.author, h2.author {font-style:italic; text-align:center;margin-top:4px;margin-bottom:0}
+p.date, h3.date {text-align:center;margin-top:4px; margin-bottom:0}
+/* Tables*/
+table { margin:auto; border-collapse:collapse; }
+table caption { margin-bottom:1ex;}
+th, td { padding:4px 6px;}
+thead tr:first-child th {border-top:1px solid black; padding-top:6px}
+thead tr:last-child  th {padding-bottom:6px}
+tbody tr:first-child td {border-top:1px solid black; padding-top:6px}
+tbody tr:last-child  td {padding-bottom:6px;}
+table tbody:last-child tr:last-child td {border-bottom:1px solid black;}
+</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Part 5: Regression</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Part 5: Regression</h1>
+</header>
+<h2 id="setup">1. Setup</h2>
+<p>For this part, we will use a new dataset. We will be looking at data on education and earnings. The data is simulated and is found here.</p>
+<p>First, we set directories, load the data and take a look:</p>
+<pre class='stata'>. cd "~/git_repos/metricsinstata/docs/part5"
+/Users/jack/git_repos/metricsinstata/docs/part5
+</pre>
+<pre class='stata'>. use "regdat.dta", clear
+</pre>
+<pre class='stata'>. des
+
+Contains data from regdat.dta
+  obs:        10,000                          
+ vars:             4                          17 Mar 2020 17:28
+ size:       160,000                          
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+              storage   display    value
+variable name   type    format     label      variable label
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+par_wealth      float   %9.0g                 Parent wealth ($1,000)
+male            float   %9.0g                 Male
+degree          float   %9.0g                 Degree indicator
+earnings        float   %9.0g                 Earnings ($1,000)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Sorted by: 
+</pre>
+<p>We see that we have 10,000 observations and four variables.</p>
+<p>We would like to use this data to assess the causal impact of getting a degree on earnings. This is an important policy question and has been the subject of a large body of research.</p>
+<h2 id="t-test">2. T-test</h2>
+<p>First off, we apply a t-test as we saw in the previous tutorial. We test the null hypothesis that average earnings among degree holders differ to those without degrees.</p>
+<pre class='stata'>. ttest earnings, by(degree)
+
+Two-sample t test with equal variances
+─────────┬────────────────────────────────────────────────────────────────────
+   Group │     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+─────────┼────────────────────────────────────────────────────────────────────
+       0 │   7,514    139.7138    .0995023    8.625194    139.5188    139.9089
+       1 │   2,486    148.2856    .1636624    8.160174    147.9647    148.6065
+─────────┼────────────────────────────────────────────────────────────────────
+combined │  10,000    141.8448    .0928294     9.28294    141.6628    142.0267
+─────────┼────────────────────────────────────────────────────────────────────
+    diff │           -8.571742    .1969449               -8.957794    -8.18569
+─────────┴────────────────────────────────────────────────────────────────────
+    diff = mean(0) - mean(1)                                      t = -43.5236
+Ho: diff = 0                                     degrees of freedom =     9998
+
+    Ha: diff &lt; 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T &lt; t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+</pre>
+<p>We strongly reject the null hypothesis. Earnings are greater for those with degrees, and the difference is statistically significant with a p value &lt; 0.0001.</p>
+<h2 id="simple-regression">3. Simple regression</h2>
+<p>We next perform the same analysis using the folloing regression model:</p>
+<p><br /><span class="math display"><em>e</em><em>a</em><em>r</em><em>n</em><em>i</em><em>n</em><em>g</em><em>s</em> = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub><em>d</em><em>e</em><em>g</em><em>r</em><em>e</em><em>e</em> + <em>ϵ</em></span><br /></p>
+<p>The command is <code>regress</code>. The first variable is treated as the outcome variable.</p>
+<pre class='stata'>. regress earnings degree
+
+      Source │       SS           df       MS      Number of obs   =    10,000
+─────────────┼──────────────────────────────────   F(1, 9998)      =   1894.30
+       Model │  137249.413         1  137249.413   Prob > F        =    0.0000
+    Residual │  724394.252     9,998  72.4539159   R-squared       =    0.1593
+─────────────┼──────────────────────────────────   Adj R-squared   =    0.1592
+       Total │  861643.664     9,999  86.1729837   Root MSE        =     8.512
+
+─────────────┬────────────────────────────────────────────────────────────────
+    earnings │      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+─────────────┼────────────────────────────────────────────────────────────────
+      degree │   8.571742   .1969449    43.52   0.000      8.18569    8.957794
+       _cons │   139.7138   .0981963  1422.80   0.000     139.5214    139.9063
+─────────────┴────────────────────────────────────────────────────────────────
+</pre>
+<p>We see that having a degree is associated with an additional $8,572 in earnings, and that this difference is highly statistically significant. This is precisely consistent with the t-test performed above. The two are equivalent.</p>
+<h2 id="multivariate-regression">4. Multivariate regression</h2>
+<p>We previously looked at randomized experiments, in which randomized assignment allowed us to move from statistical comparisons to causal statements.</p>
+<p>Should we treat the above estimates as causal? Probably not, there are many <strong>omitted variables</strong> which could be biasing our estimates. Whether or not one obtains a degree is highly non-random and likely depends on many factors. These factors may in turn determine future earnings.</p>
+<p>Given this concern, to move towards a causal estimate we add <strong>control variables</strong>. In this case, our data limitations allow us only to control for two variables, parental wealth and sex. Parental wealth is likely a good control to include, since we know that this is likely to dictate both college attendance (perhaps through earlier educational investment) and future earnings (perhaps through networks). The same story holds for sex.</p>
+<p>Therefore, we estimate the following model:</p>
+<p><br /><span class="math display"><em>e</em><em>a</em><em>r</em><em>n</em><em>i</em><em>n</em><em>g</em><em>s</em> = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub><em>d</em><em>e</em><em>g</em><em>r</em><em>e</em><em>e</em> + <em>β</em><sub>1</sub><em>p</em><em>a</em><em>r</em><em>e</em><em>n</em><em>t</em><em>w</em><em>e</em><em>a</em><em>l</em><em>t</em><em>h</em> + <em>β</em><sub>3</sub><em>m</em><em>a</em><em>l</em><em>e</em> + <em>ϵ</em></span><br /></p>
+<p>To implement this in Stata, we simply add them to the list of variables that follow the <code>regress</code> or <code>reg</code> command:</p>
+<pre class='stata'>. reg earnings degree par_wealth male
+
+      Source │       SS           df       MS      Number of obs   =    10,000
+─────────────┼──────────────────────────────────   F(3, 9996)      =   1148.87
+       Model │  220920.207         3   73640.069   Prob > F        =    0.0000
+    Residual │  640723.457     9,996  64.0979849   R-squared       =    0.2564
+─────────────┼──────────────────────────────────   Adj R-squared   =    0.2562
+       Total │  861643.664     9,999  86.1729837   Root MSE        =    8.0061
+
+─────────────┬────────────────────────────────────────────────────────────────
+    earnings │      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+─────────────┼────────────────────────────────────────────────────────────────
+      degree │   5.210076   .2082171    25.02   0.000     4.801929    5.618224
+  par_wealth │   .8008578   .0226185    35.41   0.000      .756521    .8451946
+        male │   1.207173   .1601318     7.54   0.000     .8932826    1.521064
+       _cons │   99.91123    1.11461    89.64   0.000     97.72637    102.0961
+─────────────┴────────────────────────────────────────────────────────────────
+</pre>
+<p>We see that the coefficient on degree is now smaller, consistent with the previous regression estimate being biased.</p>
+<p>If we are prepared to accept that there exist no further omitted variables, we estimate the effect of going to university on future earnings as a little over $5,200.</p>
+</body>
+</html>

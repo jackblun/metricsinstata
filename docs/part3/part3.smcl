@@ -1,0 +1,81 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part3/part3.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}17 Mar 2020, 17:47:24
+{txt}
+{com}. //_1
+. cd "~/git_repos/metricsinstata/docs/part3"
+{res}/Users/jack/git_repos/metricsinstata/docs/part3
+{txt}
+{com}. //_2
+. use "nsw.dta", clear
+{txt}
+{com}. //_3
+. hist re75
+{txt}(bin={res}26{txt}, start={res}0{txt}, width={res}1439.6792{txt})
+{res}{txt}
+{com}. graph export "hist_re75.png", replace
+{txt}(file hist_re75.png written in PNG format)
+
+{com}. //_4
+. graph box re75, by(treat)
+{res}{txt}
+{com}. graph export "box_re78_byt.png", replace
+{txt}(file box_re78_byt.png written in PNG format)
+
+{com}. //_5
+. sum re78 if treat == 1
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}re78 {c |}{res}        297    5976.352    6923.796          0   60307.93
+{txt}
+{com}. sum re78 if treat == 0
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}re78 {c |}{res}        425    5090.048    5718.089          0   39483.53
+{txt}
+{com}. //_6
+. twoway scatter re78 re75
+{res}{txt}
+{com}. graph export "scatter_re75re78.png", replace
+{txt}(file scatter_re75re78.png written in PNG format)
+
+{com}. //_7
+. binscatter re78 re75
+{res}{txt}warning: nquantiles(20) was specified, but only 13 were generated. see help file under nquantiles() for explanation.
+{res}{txt}
+{com}. graph export "binscatter_re75re78.png", replace
+{txt}(file binscatter_re75re78.png written in PNG format)
+
+{com}. //_8
+. twoway scatter re78 re75, mcolor(blue%50) ///
+> graphregion(color(white)) ///
+> xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+{res}{txt}
+{com}. //_9
+. graph export "scattermod_re75re78.png", replace
+{txt}(file scattermod_re75re78.png written in PNG format)
+
+{com}. //_10
+. twoway (scatter re78 re75 if treat == 1, mcolor(blue%50)) ///
+> (scatter re78 re75 if treat == 0, mcolor(dkorange%50)), ///
+> legend(label(1 "Treatment") label(2 "Control")) ///
+> graphregion(color(white)) ///
+> xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+{res}{txt}
+{com}. graph export "scattermodcombined_re75re78.png", replace
+{txt}(file scattermodcombined_re75re78.png written in PNG format)
+
+{com}. //_^
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part3/part3.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}17 Mar 2020, 17:47:34
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

@@ -1,128 +1,168 @@
-% Lecture 2: 
-% Jack Blundell (Stanford)
-% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+% Part 2: Exploring and cleaning data
 
-+ My email: jackblundell@stanford.edu
+## 1. Setup
 
-+ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
-+ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+We will continue working with the dataset from Part 1. This is data on participants of an employment training programme.
 
+First, we set directories, load the data and take a look:
 
-# 1. General feedback on problem set 1
+	cd "~/git_repos/metricsinstata/docs/part2"
+	
+	use "nsw.dta", clear
 
-- Great job overall
+	des
 
-- Most opted for a report-style write-up including code snippets and graphs
+***Note: We often write `, clear` after `use`. This tells Stata not to worry about losing any data currently loaded when loading the new data.***
 
-- Please also include a seperate .do file
+## 2. Inspecting distributions
 
-# 2. Common problems when using Stata
+After taking a look at the variable names and number of observations, the first thing to do is to inspect the distribution of each variable. 
 
-- ***I'm running my .do file but nothing is coming up in the main Stata window.*** The problem here is usually that your .do file editor window is associated with a different main interface window. It is possible to have multiple instances of Stata open simultaneously, each with their own associated .do file editor window. The solution is either to find the correct interface window, or to save the .do file and open it in an alternative editor.
+Why do we care about the distributions?
 
-- ***When I try to change into my main working directory, I get the error `unable to change to /XXX`.*** This is usually because there is a small mistake in the file path. You can get around this by manually choosing the directory using "File->Change working directory". This will change the directory and print the code to do so into the results window, which can then be copied into a .do file.
+- We can check if there exist any outliers. It is common for there to be mistakes in data, for example someone with "fat fingers" pressing too many zeros when typing in earnings data. These types of data errors can strongly impact results and need to be removed before analysis
 
-- ***There's too much on the screen to have my .do file editor and main interface window open side-by-side.*** This is usually the case when working on a laptop. You might like to restrict the main interface window to just the results and command windows. These are the only essential parts of the main interface.
+- The distributions can help guide model choice. For example, some models function better when variables are approximately normally distributed. We can inspect that here.
 
-# 3. Useful Stata shortcuts
+### 2.1 The tabulate and summarize commands
 
-- `fn + up/down arrows` (OSX/WINDOWS) when in the command window. This retreives previously-run Stata commands
+For discrete or categorical variables, this can be achieved using the `tabulate` command:
 
-- `SHIFT+CMD+D` (OSX) / `CTRL+D` (WINDOWS) when in .do file editor. This runs the do file.
+	tabulate treat
 
-- `SHIFT+up/down arrows` (OSX/WINDOWS) when in .do file editor. This is how you can quickly highlight sections of code to run. You can then use the above command to run this in part of the .do file in isolation
+Here we can see that there are 297 individuals for whom variable `treat` equals 1 and 425 for whom variable `treat` equals 0.
 
-- `TAB` (OSX/WINDOWS)  when in the command window. You can use this to autocomplete variable names and directories.
+Lets try doing the same with the `age` variable:
 
-# 4. .do file code layout
+	tab age
 
-The following two sections of code contain exactly the same commands:
+Variable `age` takes on far more values than `treat`, so we will be better off using the `summarize` command:
 
-```
-use "fruitdat.dta"
-rename v1 fruit
-label variable fruit "Type of fruit"
-rename v2 sales
-rename v3 price
-label var sales "Sales (units)"
-label var price "Price ($)"
-sum price if fruit == "apple", det
-```
+	summarize age
 
+Here we can see that the mean age of our individuals is 24.5, the standard deviation is 6.63, the minimum value is 17 and the maximum value is 55.
 
-```
-// load dataset
-use "fruitdat.dta"
+`summarize` is useful for continuous data. Lets apply it to variable `re75`, which represents earnings for a particular year.
 
-// name variables
-rename v1 fruit
-rename v2 sales
-rename v3 price
+	sum re75
 
-// label variables
-label variable fruit "Type of fruit"
-label var sales "Sales (units, weekly)"
-label var price "Price ($)"
+You can add the option `, detail` to get more information on a variable's distribution:
 
-// average price of apples
-sum price if fruit == "apple", det
-```
+	sum re75, detail
 
-The second output is structured logically, uses space to distinguish different tasks and provides comments. You should aim for this.
+This gives a lot of detail on the quantiles of the distribution and higher order moments.
 
-# 5. Variable names and labels
+### 2.2. Histograms
 
+You will often also plot data at this stage. The histogram is an extremeley quick and easy way to have a look at your data:
 
-"There are only two hard things in Computer Science: cache invalidation and naming things." (Phil Karlton)
+	histogram re75
+	graph export "hist_re75.png", replace
 
-Variable names should be:
+![Histogram of earnings](hist_re75.png){width=70%}
 
-- Short and easy to type (i.e. not something like `SalesOfBananas_27_v1')
+The `graph export "hist_re75.png"` part of the code tells Stata to export the current graph. A ".png" image file will appear in your current working directory. The `, replace` option tells Stata to replace any existing file that is there.
 
-- Informative (i.e. not something like tempvar29)
+We see from the histogram that the distribution is highly skewed, with a few very high earners. This is a common shape for an earnings distribution.
 
-A few example variable names:
+## 3. Conditions
 
-- earn
+Oftentimes we would like a command to only apply to a selection of observations, rather than to all observations in the dataset.
 
-- sales
+We can achieve this using the `if` command.
 
-- treatment
+For example, the following code generates a histogram only for those with earnings under 5000:
 
-Use variable labels to fully specify what each variable represents:
+	hist re75 if re75 < 5000
+	graph export "hist_re75_lim.png", replace
 
-- "Earnings in 1,000$"
+![Histogram of earnings (earnings < 5000)](hist_re75_lim.png){width=70%}
 
-- "Sales in $ per day"
+We can also generate a histogram of earnings for those with `treat` equal to 1:
 
-- "=1 if received employment training"
+	hist re75 if treat == 1
+	graph export "hist_re75_treat.png", replace
 
-# 6. Conditional statements
+![Histogram of earnings among treated](hist_re75_treat.png){width=70%}
 
-We have previously used the `if` command to perform an operation on a subset of the data. For example:
-
-```
-sum sales if fruit == "banana"
-```
-
-This is a ***conditional statement*** in which the condition is an equality (`==`).
-
-We could also use an inequality condition. This command sums sales for all observations for whom price is less than 5:
-
-
-```
-sum sales if price < 5
-```
+Note that for equality conditions, we need two equals signs.
 
 We can also chain conditions as follows:
 
-```
-sum sales if fruit == "banana" & price < 5
-```
+	sum re75 if treat == 1 & re75 < 5000
 
-This will give sales for all bananas with a price under 5. 
+The gives features of the distribution of earnings for all individuals for whom earnings are under 5000 and treat equals 1.
 
 The full set of conditions is:
 
 ![Conditional statements in Stata](conditionals.png){width=100%}
+
+## 4. Keep and drop
+
+Two very useful commands are `keep` and `drop`. Lets say we would like to keep only two variables, `re75` and `treat`. We can do this by typing:
+
+```
+keep re75 treat
+```
+
+All other variables will be deleted. They remain in the original file unless you save and replace the ".dta" file.
+
+Now lets say we want to delete those two variables. You can do this by typing:
+
+```
+drop re75 treat
+```
+
+This also works for observations. Lets say you want to drop all observations with earnings equal to zero:
+
+
+```
+drop if re75 == 0
+```
+
+Be careful to keep track of what you have dropped. You may find something confusing further down the line which can be attributed to a poorly executed `keep` or `drop` command.
+
+## 5. Saving data
+
+Typically, a project will involve some data cleaning. This could involve:
+
+- Naming and labeling variables
+
+- Dropping variables we don't need
+
+- Dropping observations which either we don't want or have a problem in one or more variables
+
+- Transforming variables
+
+- Generating new variables as functions of existing ones.
+
+With that basic data cleaning complete, we typicall save a cleaned version. This allows us to perform analysis without having to go through all the previous steps again. Data-cleaning code can often take a very long time to run, so its useful to "check-in" your dataset after cleaning.
+
+The command to do this is `save`:
+
+
+```
+save "lalonde_clean.dta", replace
+```
+
+## 6. Standard Stata syntax
+
+You'll have recognized by now that Stata follows a fairly standard syntax across (most) commands. At its core, a Stata command is made up of a core command (e.g. `sum`) followed by one or more variable names (e.g. `re78`). There is usually then a comma, then a number of options (e.g. `det`). Here is that full command:
+
+```
+sum re78, det
+```
+
+If we include a condition, it usually follows the variable names and precedes the comma:
+
+
+```
+sum re78 if re78 < 5000, det
+```
+
+This structure doesn't hold for all commands, as we saw above for `keep` and `drop`. If unsure of how to use a command, remember you can type `help` then the name of the command to access Stata's help files, which are very useful. 
+
+Even advanced Stata users regularly have to go back to Stata help files to understand how to use a command, so its worth getting used to the process.
+
+
 

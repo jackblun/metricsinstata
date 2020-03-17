@@ -1,0 +1,97 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part5/part5.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}17 Mar 2020, 17:48:07
+{txt}
+{com}. //_1
+. cd "~/git_repos/metricsinstata/docs/part5"
+{res}/Users/jack/git_repos/metricsinstata/docs/part5
+{txt}
+{com}. //_2
+. use "regdat.dta", clear
+{txt}
+{com}. //_3
+. des
+
+{txt}Contains data from {res}regdat.dta
+{txt}  obs:{res}        10,000                          
+{txt} vars:{res}             4                          17 Mar 2020 17:28
+{txt} size:{res}       160,000                          
+{txt}{hline}
+              storage   display    value
+variable name   type    format     label      variable label
+{hline}
+{p 0 48}{res}{bind:par_wealth     }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Parent wealth ($1,000){p_end}
+{p 0 48}{bind:male           }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Male{p_end}
+{p 0 48}{bind:degree         }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Degree indicator{p_end}
+{p 0 48}{bind:earnings       }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}Earnings ($1,000){p_end}
+{txt}{hline}
+Sorted by: 
+
+{com}. //_4
+. ttest earnings, by(degree)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}  7,514{col 22} 139.7138{col 34} .0995023{col 46} 8.625194{col 58} 139.5188{col 70} 139.9089
+       {txt}1 {c |}{res}{col 12}  2,486{col 22} 148.2856{col 34} .1636624{col 46} 8.160174{col 58} 147.9647{col 70} 148.6065
+{txt}{hline 9}{c +}{hline 68}
+combined {c |}{res}{col 12} 10,000{col 22} 141.8448{col 34} .0928294{col 46}  9.28294{col 58} 141.6628{col 70} 142.0267
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22}-8.571742{col 34} .1969449{col 58}-8.957794{col 70} -8.18569
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res}-43.5236
+{txt}Ho: diff = 0                                     degrees of freedom = {res}    9998
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}0.0000         {txt}Pr(|T| > |t|) = {res}0.0000          {txt}Pr(T > t) = {res}1.0000
+{txt}
+{com}. //_5
+. regress earnings degree
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}    10,000
+{txt}{hline 13}{c +}{hline 34}   F(1, 9998)      = {res}  1894.30
+{txt}       Model {c |} {res} 137249.413         1  137249.413   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res} 724394.252     9,998  72.4539159   {txt}R-squared       ={res}    0.1593
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.1592
+{txt}       Total {c |} {res} 861643.664     9,999  86.1729837   {txt}Root MSE        =   {res}  8.512
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}    earnings{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}degree {c |}{col 14}{res}{space 2} 8.571742{col 26}{space 2} .1969449{col 37}{space 1}   43.52{col 46}{space 3}0.000{col 54}{space 4}  8.18569{col 67}{space 3} 8.957794
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} 139.7138{col 26}{space 2} .0981963{col 37}{space 1} 1422.80{col 46}{space 3}0.000{col 54}{space 4} 139.5214{col 67}{space 3} 139.9063
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. //_6
+. reg earnings degree par_wealth male
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}    10,000
+{txt}{hline 13}{c +}{hline 34}   F(3, 9996)      = {res}  1148.87
+{txt}       Model {c |} {res} 220920.207         3   73640.069   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res} 640723.457     9,996  64.0979849   {txt}R-squared       ={res}    0.2564
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.2562
+{txt}       Total {c |} {res} 861643.664     9,999  86.1729837   {txt}Root MSE        =   {res} 8.0061
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}    earnings{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}degree {c |}{col 14}{res}{space 2} 5.210076{col 26}{space 2} .2082171{col 37}{space 1}   25.02{col 46}{space 3}0.000{col 54}{space 4} 4.801929{col 67}{space 3} 5.618224
+{txt}{space 2}par_wealth {c |}{col 14}{res}{space 2} .8008578{col 26}{space 2} .0226185{col 37}{space 1}   35.41{col 46}{space 3}0.000{col 54}{space 4}  .756521{col 67}{space 3} .8451946
+{txt}{space 8}male {c |}{col 14}{res}{space 2} 1.207173{col 26}{space 2} .1601318{col 37}{space 1}    7.54{col 46}{space 3}0.000{col 54}{space 4} .8932826{col 67}{space 3} 1.521064
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} 99.91123{col 26}{space 2}  1.11461{col 37}{space 1}   89.64{col 46}{space 3}0.000{col 54}{space 4} 97.72637{col 67}{space 3} 102.0961
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. //_^
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part5/part5.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}17 Mar 2020, 17:48:07
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

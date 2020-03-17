@@ -1,67 +1,106 @@
-% Lecture 3: Scatter plots and regression 
-% Jack Blundell
-% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+% Part 3: Plotting data
 
-+ My email: jackblundell@stanford.edu
 
-+ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
-+ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+## 1. Setup
 
-# 1. Scatter plots
+Once again, we start by setting the working directory and loading the LaLonde (1986) data:
 
-So far we have seen ***histograms*** and ***box plots***. A third useful plot to draw is a ***scatter plot***. 
+	cd "~/git_repos/metricsinstata/docs/part3"
+	
+	use "nsw.dta", clear
 
-Scatter plots are very common when you would like to see the relationship between two continuous variables. 
+## 2. Histogram (again)
 
-First I set up my workspace and simulate some data:
+We learned in part 2 how to create a histogram:
 
-	// set directory
-	cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 3/markdown"
+	hist re75
+	graph export "hist_re75.png", replace
 
-	// set seed
-	set seed 123
+![Histogram of 1975 earnings](hist_re75.png){width=70%}
 
-	// simulate data
-	clear
-	set obs 1000
-	gen x = rnormal(0,0.1)
-	gen z = 0.3*(x) + rnormal(0,0.1)
-	gen y = x + 0.5*(z) + rnormal(0,0.1)
+This is useful for inspecting the distribution of single continuous or ordinal variables. Here we will extend on this.
 
-I have three variables, and would like to plot the relationship between `y` and `x`. 
+## 3. Box plots
 
-The command for this is `twoway scatter` followed by the y-axis variable then the x-axis variable. Here is an example:
+Sometimes we would like to inspect the distribution of a continuous variable conditional on a categorical variable. For example, in the LaLonde example we might like to see how post-training earnings vary between those who received the training (`treat = 1`) and those who did not (`treat = 0`). 
 
-	// scatter plot
-	twoway scatter y x
-	graph export "scatterplot.png", replace
+	graph box re75, by(treat)
+	graph export "box_re78_byt.png", replace
 
-![Scatter plot](scatterplot.png){width=80%}
+![1978 earnings by treatment](box_re78_byt.png){width=70%}
 
-# 2. Simple regression in Stata
+From this we can see that the 25th percentile, median and 75th percentile of 1978 earnings are higher for the `treat = 1` group.
 
-The Stata command for regression is `regress` or `reg` for short. Here is a regression of `y` on `x` in our simulated data:
+We can achieve the same comparison by using the `sum` command with the `,det` option:
 
-	regress y x
+	sum re78 if treat == 1
+	sum re78 if treat == 0
 
-The slope estimate is 1.170, with a standard error of 0.037. The slope is statistically significant, with a p value of <0.01.
+## 4. Scatter plots
 
-We can add the fitted line on the graph as follows:
+Perhaps the most common type of plot to generate in applied econometrics is the scatter plot. This is used when we would like to inspect the relationship between two continuous variables. 
 
-	twoway (scatter y x) (lfit y x)
-	graph export "scatterplot_lfit.png", replace
+Lets make a scatter plot of `re78`, which represents 1978 earnings, on `re75`, which represents 1975 earnings.
 
-![Scatter plot](scatterplot_lfit.png){width=80%}
+	twoway scatter re78 re75
+	graph export "scatter_re75re78.png", replace
 
-# 3. Multivariate regression in Stata
+![1978 earnings and 1975 earnings](scatter_re75re78.png){width=70%}
 
-If we want to include more variables on the right hand side of a regression, we just add them to the end of the regression command. Here I estimate a regression of `y` on `x` and `z` together:
+There may be something of a positive relationship here, but it is hard to tell, in part due to the skewness of the data and in part due to the many zeros.
 
-	// run regression
-	reg y x z
+When a scatter plot looks like this, a convenient tool is `binscatter`, which was recently developed.
 
-Both `x` and `z` are highly statistically significant. 
+`binscatter` is our first example of a command which does not come bundled with Stata, but rather must be installed.
 
-As with previous commands, options can be added and the sample can be limited. Here I subset to those with a negative value for `z` and use robust standard errors:
+Fortunately, this is very easy in Stata. Just type the command `ssc install binscatter` and the package will be installed for you. You only need to do this once on each machine. Most user-built Stata packages are available through this route.
 
-	reg y x z if z < 0, robust
+Lets try the scatter plot again:
+
+	binscatter re78 re75
+	graph export "binscatter_re75re78.png", replace
+
+![1978 earnings and 1975 earnings](binscatter_re75re78.png){width=70%}
+
+Now we see far more of a clear positive relationship. The data has been grouped into quantiles based on the x-axis, and the displayed points are means within those bins. This is extremely useful, particularly when working with large datasets. The linear regression fit line has also been added to the graph by default.
+
+## 5. Customizing plots
+
+The default plots in Stata are not the most attractive. Fortunately, you can customize them to your heart's content. Here is an example where I have changed the background color to white, modified point colors and change axis labels:
+
+	twoway scatter re78 re75, mcolor(blue%50) ///
+	graphregion(color(white)) ///
+	xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+
+	graph export "scattermod_re75re78.png", replace
+
+![1978 earnings and 1975 earnings](scattermod_re75re78.png){width=70%}
+
+Note the use of `///`. This tells Stata to move to the next line of the .do file, as if the first line were to continue. This is useful if you have very long lines of code that would be difficult to read if left on one line.
+
+
+## 6. Layering and customizing plots
+
+Often it is desirable to layer plots. This is also very easy in Stata. In the following plot, I layer a scatter plot of `re78` on `re75` for those for whom `treat=1`, on top of the equivalent for `treat=0`.
+
+
+	twoway (scatter re78 re75 if treat == 1, mcolor(blue%50)) ///
+	(scatter re78 re75 if treat == 0, mcolor(dkorange%50)), ///
+	legend(label(1 "Treatment") label(2 "Control")) ///
+	graphregion(color(white)) ///
+	xtitle("Earnings $1,000 (1978)") ytitle("Earnings $1,000 (1975)")
+	graph export "scattermodcombined_re75re78.png", replace
+
+![1978 earnings and 1975 earnings by treatment status](scattermodcombined_re75re78.png){width=70%}
+
+Note that each graph is embedded in parentheses. It is possible to set options for each element of the plot, such as `mcolor(blue%50)` which sets the marker color for the first layer. It is also possible to set options for the combined plot, such as `graphregion(color(white))`.
+
+## 7. Other plots
+
+Above I have shown the most common plots in my experience, but here are a few more that might prove useful:
+
++ Regression line plot - `lfit`
+
++ Polynomial line plot -  `lpoly`
+
++ Mapping - `spmap`

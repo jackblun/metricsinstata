@@ -3,14 +3,158 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part2/part2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}16 Mar 2020, 21:21:21
+ {txt}opened on:  {res}17 Mar 2020, 17:47:19
+{txt}
+{com}. //_1
+. cd "~/git_repos/metricsinstata/docs/part2"
+{res}/Users/jack/git_repos/metricsinstata/docs/part2
+{txt}
+{com}. //_2
+. use "nsw.dta", clear
+{txt}
+{com}. //_3
+. des
+
+{txt}Contains data from {res}nsw.dta
+{txt}  obs:{res}           722                          
+{txt} vars:{res}            10                          18 May 2012 09:35
+{txt} size:{res}        20,938                          
+{txt}{hline}
+              storage   display    value
+variable name   type    format     label      variable label
+{hline}
+{p 0 48}{res}{bind:data_id        }{txt}{bind: str14   }{bind:{txt}%14s      }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:treat          }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:age            }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:education      }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:black          }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:hispanic       }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:married        }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:nodegree       }{txt}{bind: byte    }{bind:{txt}%8.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:re75           }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:re78           }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{txt}{hline}
+Sorted by: 
+
+{com}. //_4
+. tabulate treat
+
+      {txt}treat {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          0 {c |}{res}        425       58.86       58.86
+{txt}          1 {c |}{res}        297       41.14      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        722      100.00
+{txt}
+{com}. //_5
+. tab age
+
+        {txt}age {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+         17 {c |}{res}         52        7.20        7.20
+{txt}         18 {c |}{res}         75       10.39       17.59
+{txt}         19 {c |}{res}         63        8.73       26.32
+{txt}         20 {c |}{res}         58        8.03       34.35
+{txt}         21 {c |}{res}         40        5.54       39.89
+{txt}         22 {c |}{res}         42        5.82       45.71
+{txt}         23 {c |}{res}         41        5.68       51.39
+{txt}         24 {c |}{res}         37        5.12       56.51
+{txt}         25 {c |}{res}         56        7.76       64.27
+{txt}         26 {c |}{res}         35        4.85       69.11
+{txt}         27 {c |}{res}         47        6.51       75.62
+{txt}         28 {c |}{res}         31        4.29       79.92
+{txt}         29 {c |}{res}         24        3.32       83.24
+{txt}         30 {c |}{res}         12        1.66       84.90
+{txt}         31 {c |}{res}         22        3.05       87.95
+{txt}         32 {c |}{res}          7        0.97       88.92
+{txt}         33 {c |}{res}         10        1.39       90.30
+{txt}         34 {c |}{res}         11        1.52       91.83
+{txt}         35 {c |}{res}          7        0.97       92.80
+{txt}         36 {c |}{res}          7        0.97       93.77
+{txt}         37 {c |}{res}          3        0.42       94.18
+{txt}         38 {c |}{res}          7        0.97       95.15
+{txt}         39 {c |}{res}          5        0.69       95.84
+{txt}         40 {c |}{res}          2        0.28       96.12
+{txt}         41 {c |}{res}          5        0.69       96.81
+{txt}         42 {c |}{res}          5        0.69       97.51
+{txt}         43 {c |}{res}          2        0.28       97.78
+{txt}         44 {c |}{res}          4        0.55       98.34
+{txt}         45 {c |}{res}          3        0.42       98.75
+{txt}         46 {c |}{res}          3        0.42       99.17
+{txt}         48 {c |}{res}          1        0.14       99.31
+{txt}         49 {c |}{res}          1        0.14       99.45
+{txt}         50 {c |}{res}          2        0.28       99.72
+{txt}         54 {c |}{res}          1        0.14       99.86
+{txt}         55 {c |}{res}          1        0.14      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        722      100.00
+{txt}
+{com}. //_6
+. summarize age
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 9}age {c |}{res}        722    24.52078    6.625947         17         55
+{txt}
+{com}. //_7
+. sum re75
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}re75 {c |}{res}        722    3042.897    5066.143          0   37431.66
+{txt}
+{com}. //_8
+. sum re75, detail
+
+                            {txt}re75
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}        0              0
+{txt} 5%    {res}        0              0
+{txt}10%    {res}        0              0       {txt}Obs         {res}        722
+{txt}25%    {res}        0              0       {txt}Sum of Wgt. {res}        722
+
+{txt}50%    {res}  936.308                      {txt}Mean          {res} 3042.897
+                        {txt}Largest       Std. Dev.     {res} 5066.143
+{txt}75%    {res} 4023.211       29897.19
+{txt}90%    {res} 8920.471       32984.25       {txt}Variance      {res} 2.57e+07
+{txt}95%    {res} 12205.14       36941.27       {txt}Skewness      {res} 2.958421
+{txt}99%    {res} 24294.75       37431.66       {txt}Kurtosis      {res} 14.54842
+{txt}
+{com}. //_9
+. histogram re75
+{txt}(bin={res}26{txt}, start={res}0{txt}, width={res}1439.6792{txt})
+{res}{txt}
+{com}. graph export "hist_re75.png", replace
+{txt}(file hist_re75.png written in PNG format)
+
+{com}. //_10
+. hist re75 if re75 < 5000
+{txt}(bin={res}23{txt}, start={res}0{txt}, width={res}214.44412{txt})
+{res}{txt}
+{com}. graph export "hist_re75_lim.png", replace
+{txt}(file hist_re75_lim.png written in PNG format)
+
+{com}. //_11
+. hist re75 if treat == 1
+{txt}(bin={res}17{txt}, start={res}0{txt}, width={res}2201.8624{txt})
+{res}{txt}
+{com}. graph export "hist_re75_treat.png", replace
+{txt}(file hist_re75_treat.png written in PNG format)
+
+{com}. //_12
+. sum re75 if treat == 1 & re75 < 5000
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}re75 {c |}{res}        229    995.5063     1313.29          0   4923.263
 {txt}
 {com}. //_^
 . log close
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part2/part2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}16 Mar 2020, 21:21:21
+ {txt}closed on:  {res}17 Mar 2020, 17:47:24
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

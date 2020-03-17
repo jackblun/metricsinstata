@@ -1,102 +1,43 @@
-% Lecture 4: Binned scatter plots and multivariate regression 
-% Jack Blundell
-% PUBLPOL 330D Applied Econometrics for Public Policy, Winter 2020
+% Part 4: Randomized experiments and t-tests
 
-+ My email: jackblundell@stanford.edu
+## 1. Setup
 
-+ My office hours: 8.30 - 10.30am every Thursday at Econ 350 (Landau building)
-+ Section (further office hours): 2.30 - 3.20pm (Bass B312)
+Once again, we start by setting the working directory and loading the LaLonde (1986) data:
 
-## 1. Reading Stata regression output
+	cd "~/git_repos/metricsinstata/docs/part4"
+	
+	use "nsw.dta", clear
 
-Lets say we run the following regression in Stata:
-$$ y = \beta_0 + \beta_1 x + \beta_2 z + \epsilon $$
+Recall that this is data from a randomized trial in which some individuals are given employment training. We would like to test whether the training affected the earnings of participants.
 
-![Regression output](regoutput.png){width=80%}
+## 2. Checking for effective randomization
 
-+ The `Coef.` column gives each estimated parameter, with `_cons` giving intercept $\beta_0$
+When confronted with data from a randomized experiment, one of the first checks should be to verify that the randomization has been effective.
 
-+ Standard errors are given in `Std. Err.`
+A simple way to do that is by testing whether pre-determined characteristics differ by the treatment and the control group. In the below code, I test whether pre-treatment (1975) earnings differ depending on treatment status. I do this by running a t-test:
 
-+ The remaining columns are p-values, t-statistics and confidence intervals
+	ttest re75, by(treat)
 
+The `ttest` command returns a lot of information. We see for example that mean earnings in the treated group were 39 dollars higher than those of the control group. However, this is small relative to its standard error. 
 
-## 2. Binned scatter plots
+The bottom of the output contains the p-values for a variety of hypotheses. We see that we cannot reject the null hypothesis of the two means being equal. The p-value for this particular null hypothesis is 0.9182.
 
-Last week we learned how to create a ***scatter plot***.
+At least based on this variable, it seems that treatment has been effectively randomized. One could perform equivalent tests for all pre-determined variables available. To be thorough, one ought to adjust for multiple hypothesis testing but I will not address that here.
 
-Unfortunately, with real data scatter plots often look very messy. Here is an example on some simulated data in which by construction there is a positive relationship between `x` and `y`:
+## 3. Estimating a treatment effect
 
-	// set directory
-	cd "~/Dropbox/Documents/Teaching/PUBLPOL330D/Lectures/Lecture 4/markdown"
+Given the above evidence that randomization has been effective, I now compare outcomes between the treated and control group. I will run a t-test to test whether post-experiment (1978) earnings differ between the treatment and the control group
 
-	// set seed
-	set seed 123
+	ttest re78, by(treat)
 
-	// simulate data
-	clear
-	set obs 1000
-	gen x = rnormal(0,0.1)
-	gen z = 0.3*(x) + rnormal(0,0.5)
-	gen y = x + 0.5*(z) + rnormal(0,0.5)
+We can reject the null hypothesis of equality of means at the 10% but not the 5% level. We would usually say that the difference is **marginally significant**.
 
-	// scatter plot
-	twoway scatter y x
-	graph export "scatter.png", replace
+The assumptions required for a causal interpretation are:
 
-![Scatter plot](scatter.png){width=80%}
++ Randomization
 
-A great recent package tackles this problem by grouping data before plotting. The package is called ***binscatter*** and here is what it looks like with the same data:
++ Stable unit treatment value (Rubin, 1978)
 
-	// binned scatter plot
-	binscatter y x
-	graph export "binscatter.png", replace
+For more details, see Athey and Imbens (2016) (https://arxiv.org/abs/1607.00698)
 
-![Binned scatter plot](binscatter.png){width=80%}
-
-You will need to install it using command `ssc install binscatter` before using it.
-
-## 3. Storing estimates
-
-Oftentimes we would like to estimate something, then use that estimate in a later command. 
-
-One approach is to inspect the output and write it down directly:
-
-	sum x
-	gen x_above_mean = 0
-	replace x_above_mean = 1 if  x >= .002
-
-This works, but is likely to lead to errors and will be incorrect if your data changes.
-
-A better approach is to store the estimate then retrieve it as follows:
-
-	sum x
-	drop x_above_mean
-	gen x_above_mean = 0
-	replace x_above_mean = 1 if x >= r(mean)
-
-How did I know the mean was stored as `r(mean)`? I consulted the documentation for the `summarize` command by typing `help summarize`:
-
-![Stored results after `summarize`](helpsum.png){width=80%}
-
-In general, ***hard-coding numbers into code is a bad idea***.
-
-## 4. Making publication-quality graphs
-
-Stata graphs are ugly by default:
-
-![Ugly scatter plot](scatter.png){width=80%}
-
-By adding some additional options, we can make much nicer looking graphs ready for presentations / publication:
-
-	// scatter plot
-	twoway scatter y x, graphregion(color("white"))  mcolor(black%50) ///
-	xtitle("Sales of bananas") ytitle("Sales of apples") ///
-	title("Sales last summer", color("black"))	
-	graph export "scatterclean.png", replace
-
-![Nice-looking scatter plot](scatterclean.png){width=80%}
-
-
-
-
+Under these assumptions, we can interpret the difference as an estimate of the average treatment effect on the treated (ATET). As the treatment group have earnings that are $887 higher than the control group on average, we estimate an ATET of $887, which is marginally statistically significant.

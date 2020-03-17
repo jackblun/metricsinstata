@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}16 Mar 2020, 21:21:20
+ {txt}opened on:  {res}17 Mar 2020, 17:47:17
 {txt}
 {com}. //_1
 . /* Lalonde analysis
@@ -99,7 +99,7 @@ Sorted by:
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part1/part1.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}16 Mar 2020, 21:21:20
+ {txt}closed on:  {res}17 Mar 2020, 17:47:17
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

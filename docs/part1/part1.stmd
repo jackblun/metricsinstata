@@ -24,7 +24,7 @@ While R and Python are also valuable to learn, Stata remains the most-common pro
 
 The Stata Interface consists of the following windows:
 
-![Stata Interface (source: https://tutorials.iq.harvard.edu/Stata/StataIntro/StataIntro.html)](StataInterface.png){width=100%}
+![Stata Interface](StataInterface.png){width=100%}
 
 The roles of each element are:
 
@@ -36,10 +36,6 @@ The roles of each element are:
 
 + The **variables window** gives information about variables. Note that each variable has a name and a label, along with some other properties
 
-+ The **graph window** contains any graphical output
-
-+ The **do-file editor** allows you to edit .do files, which is what Stata scripts are called. .do files contain commands which can then be run in batches. 
-
 ## 1.2 Running code in Stata
 
 There are two ways to run code in Stata:
@@ -48,7 +44,9 @@ There are two ways to run code in Stata:
 
 + Writing then running a .do file
 
-While the first option is easy for one-off commands, as you become familiar with the software it is best to use .do files. .do files are opened in the do-file editor, which can be opened through File -> New. They are run either by clicking 'do' or by pressing CMD+SHIFT+d (OSX) or CTRL+d (Windows). 
+While the first option is easy for one-off commands, as you become familiar with the software it is best to use .do files. .do files are opened in the do-file editor, which can be opened through File -> New. They are run either by clicking 'do' or by pressing CMD+SHIFT+d (OSX) or CTRL+d (Windows).
+
+As a rule, your projects should be contained in one or more .do files which contain all code needed to produce your analysis.
 
 ### 1.3 Finding help
 
@@ -56,16 +54,17 @@ Perhaps the most important Stata command to know is `help`, which brings up Stat
 
 ![Stata help](helpregress.png){width=100%}
 
-See the end of these notes for further resources.
+See the end of this tutorial for further resources.
 
 ## 2. Worked example: Lalonde (1986)
-
 
 Our application will be a classic paper in Labor economics (*LaLonde, Robert J. “Evaluating the Econometric Evaluations of Training Programs with Experimental Data.” The American Economic Review, 1986*). In this paper, LaLonde investigates the impact of a randomized employment program on earnings. 
 
 ### 2.1 Starting a .do file
 
-We can now start looking at an example .do file. A typical project consists of several (often several dozen) .do files each with hundreds of lines of code which are interlinked, but here we will just work from a single file.
+We can now start looking at an example .do file. A typical project consists of several (often several dozen) .do files each with hundreds of lines of code which are interlinked, but here we will just work from a single file. 
+
+You should think about the .do file as a series of text instructions which tell Stata what to do.
 
 A .do file should start with a title and short description. My .do file for example starts with the following:
 
@@ -81,14 +80,14 @@ A .do file should start with a title and short description. My .do file for exam
 	2. Rename and relabel variables
 	*/	
 
-The `/*` and `*/` symbols tell Stata that the enclosed text is not to be read as Stata commands, but instead provides information and context to the researcher reading the code. It is good practice when writing code to include some non-command text. These might be section titles, or small annotations describing code. Any text following `*` or `//`, or enclosed between `/*` and `*/` will not be read as a command by stata so can be used to convey this information. Here's an example of a comment, followed by a line of code:
+The `/*` and `*/` symbols tell Stata that the enclosed text is not to be read as Stata commands, but instead provides information and context to the researcher reading the code. It is good practice when writing code to include some non-command text. These might be section titles, or small annotations describing code. Any text following `*` or `//`, or enclosed between `/*` and `*/` will not be read as a command by stata so can be used to convey this information. Here's an example of a comment, followed by a line of code (don't worry about the code for now):
 
 ```
 // regress earnings on treatment for adult sub-sample
 reg y t if age >= 18
 ```
 
-While your code might seem self-explanatory to you at first, oftentimes this is not the case for others, a grader or indeed for your future self. To avoid clutter, I exclude all comments in the code included below, but you'll see them in the full .do file.
+While your code might seem self-explanatory to you at first, oftentimes this is not the case for others, a grader or indeed for your future self. To avoid clutter, I exclude all comments in the code included below, but you'll see them in the full .do file at the end of this section.
 
 Next up in my .do file is the following:
 
@@ -98,7 +97,7 @@ Next up in my .do file is the following:
 
 These two commands (`clear` and `set more off`) are standard to include at the top of .do files. They clear the system and allow Stata to print large amounts of output to the screen. 
 
-Next I set the working directory. For this example, we will work in a single folder which will be our directory, though more complex projects will require further structure. This should be where your .do file is saved, and where the data file `lalonde_experiment.txt` is saved. Unless otherwise specified, any output you generate will be saved here. 
+Next I set the working directory. For this example, we will work in a single folder which will be our directory, though more complex projects will require further structure. This should be where your .do file is saved, and where the data file you will use is saved. Unless otherwise specified, any output you generate will be saved here. 
 
 	cd "~/git_repos/metricsinstata/docs/part1"
 
@@ -137,6 +136,8 @@ Here we see what looks like an Excel spreadsheet. Each row represents an observa
 
 ## 2.3 Names and labels
 
+"There are only two hard things in Computer Science: cache invalidation and naming things." (Phil Karlton)
+
 While using `browse` can be useful to take a look at the data, a more useful command to indicate what a dataset contains is `describe`. 
 
 	describe
@@ -155,16 +156,37 @@ In general, your variable names should be short, informative and easy to type. Y
 
 	label variable treat "Treatment indicator"
 
-Lets check this has worked:
+A few example variable names:
+
+- earn
+
+- sales
+
+- treatment
+
+Use variable labels to fully specify what each variable represents:
+
+- "Earnings in 1,000$"
+
+- "Sales in $ per day"
+
+- "=1 if received employment training"
+
+## 2.4 Abbreviations
+
+Lets check out our data again:
 
 	des
 
 You may have noticed that rather than typing `describe`, the above code snippet achieves the same outcome with `des`. This is a feature of Stata. Commands (and variables) can be abbreviated. In the rest of the tutorials, I will use full command names when first using a command, then follow standard abbreviations if the command comes up again.
 
+## 2.5 Closing the log file
+
 The very final thing to do is to close the log file:
 
 	//log close
 
+## 2.6 A complete .do file
 
 Now lets take a look at what the complete .do file looks like:
 
@@ -211,7 +233,168 @@ des
 log close
 ```	
 
-## 3. Further resources
+## 3. General coding tips
+
+### 3.1 .do file code layout
+
+The following two sections of code (purely for illustration) contain exactly the same commands:
+
+```
+use "fruitdat.dta"
+rename v1 fruit
+label variable fruit "Type of fruit"
+rename v2 sales
+rename v3 price
+label var sales "Sales (units)"
+label var price "Price ($)"
+sum price if fruit == "apple", det
+```
+
+
+```
+// load dataset
+use "fruitdat.dta"
+
+// name variables
+rename v1 fruit
+rename v2 sales
+rename v3 price
+
+// label variables
+label variable fruit "Type of fruit"
+label var sales "Sales (units, weekly)"
+label var price "Price ($)"
+
+// average price of apples
+sum price if fruit == "apple", det
+```
+
+The second output is structured logically, uses space to distinguish different tasks and provides comments. You should aim for this.
+
+### 3.2 Reducing repetition
+
+By now you have run some basic commands, so it is time to return to some more general coding skills.
+
+One rule of coding is to *avoid repetition as much as possible*. Reducing repetition:
+
++ makes mistakes less likely
+
++ makes it easier to update your code later
+
++ makes code easier to read
+
+#### 3.2.1 The "by" command
+
+Lets say we want to inspect means by group. One option is to use `if`, as we have seen:
+
+```
+sum earnings if education == "high school"
+sum earnings if education == "college"
+sum earnings if education == "below high school"
+```
+
+A convenient alternative is to use `by`. You will get the same result from:
+
+```
+sort education
+by education: sum earnings
+```
+
+What is going on here?
+
++ `sort` tells Stata to sort the data based on education. This is necessary before the command `by`.
++ `by education: sum earnings` tells Stata to perform operation `sum earnings` separately for each value of `education`
+
+
+#### 3.2.2 Looping over variables
+
+Lets say we have three variables `x`, `y` and `z`. Missing values for these variables are coded as -99 and we would like to drop all observations with any missing values.
+
+One valid approach is:
+
+```
+drop if x == -99
+drop if y == -99
+drop if z == -99
+```
+
+This involves a lot of repetition. When writing code, we try to avoid repetition where possible, keeping our scripts (.do files) as short as possible.
+
+We can instead use a loop which performs an operation to all variables in a `varlist`. A `varlist` is just a list of variable names:
+
+```
+foreach var of varlist x y z {
+	drop if `var' == - 99
+}
+```
+
+What is going on here?
+
++ `foreach var of varlist` tells Stata we are going to run a block of code over multiple variables.
+
++ `x y z` provides the variables
+
++ `{` and `}` enclose the code to be performed
+
++ variable names are substituted in place of `var`
+
+This is useful whenever we want to apply a single operation to multiple variables.
+
+#### 3.2.3 Looping over numbers
+
+We can also loop over numbers held in a `numlist`.
+
+To illustrate, lets assume that we want to generate 10 new variables named var1, var2, var3 etc. We want all observations to have a value of 1 for all these new variables. The long-winded approach is:
+
+```
+gen var1
+gen var2
+gen var3
+gen var4
+gen var5
+gen var6
+gen var7
+gen var8
+gen var9
+gen var19
+```
+
+A better way to do this is:
+
+```
+foreach num of numlist 1:10 {
+	gen var`num' = 1
+}
+```
+
+What is going on here?
+
++ `foreach num of numlist` tells Stata we are going to run a block of code over a list of numbers.
+
++ `1/10` means that we are looping over all integers between 1 and 10
+
++ `{` and `}` enclose the code to be performed
+
+
+## 4. Common problems when using Stata
+
+- ***I'm running my .do file but nothing is coming up in the main Stata window.*** The problem here is usually that your .do file editor window is associated with a different main interface window. It is possible to have multiple instances of Stata open simultaneously, each with their own associated .do file editor window. The solution is either to find the correct interface window, or to save the .do file and open it in an alternative editor.
+
+- ***When I try to change into my main working directory, I get the error `unable to change to /XXX`.*** This is usually because there is a small mistake in the file path. You can get around this by manually choosing the directory using "File->Change working directory". This will change the directory and print the code to do so into the results window, which can then be copied into a .do file.
+
+- ***There's too much on the screen to have my .do file editor and main interface window open side-by-side.*** This is usually the case when working on a laptop. You might like to restrict the main interface window to just the results and command windows. These are the only essential parts of the main interface.
+
+## 5. Useful Stata shortcuts
+
+- `pageup/pagedown` / `fn + up/down arrows` (OSX/WINDOWS) when in the command window. This retreives previously-run Stata commands
+
+- `SHIFT+CMD+D` (OSX) / `CTRL+D` (WINDOWS) when in .do file editor. This runs the do file. If nothing is highlighted, the entire .do file will run. If a section of code is highlighted, only that section will be run.
+
+- `SHIFT+up/down arrows` (OSX/WINDOWS) when in .do file editor. This is how you can quickly highlight sections of code to run. You can then use the above command to run this in part of the .do file in isolation
+
+- `TAB` (OSX/WINDOWS)  when in the command window. You can use this to autocomplete variable names and directories.
+
+## 6. Further resources
 
 There exist a large number of comprehensive Stata resources available:
 
