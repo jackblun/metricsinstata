@@ -2,7 +2,7 @@ This is a short course showing you how to perform common applied econometric met
 
 The course is divided into 10 guided tutorials, which are best done in sequence. Click on each section below to access the tutorial.
 
-[Note that this is work-in-progress. Tutorials 4 and onwards will be added over time]
+[Note that this is work-in-progress. Tutorials 5 and onwards will be added over time]
 
 1. [Introduction to Stata](docs/part1/part1.html)
 2. [Exploring and cleaning data](docs/part2/part2.html)
