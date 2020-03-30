@@ -8,19 +8,21 @@ Once again, we start by setting the working directory and loading the LaLonde (1
 	
 	use "nsw.dta", clear
 
-Recall that this is data from a randomized trial in which some individuals are given employment training. We would like to test whether the training affected the earnings of participants.
+Recall that this is data from a randomized trial in which some individuals are given employment training. 
+
+We would like to test whether the training affected the earnings of participants.
 
 ## 2. Checking for effective randomization
 
-When confronted with data from a randomized experiment, one of the first checks should be to verify that the randomization has been effective.
+When confronted with data from a randomized experiment, one of the first checks should be to verify that the **randomization has been effective**.
 
-A simple way to do that is by testing whether pre-determined characteristics differ by the treatment and the control group. In the below code, I test whether pre-treatment (1975) earnings differ depending on treatment status. I do this by running a t-test:
+A simple way to do that is by testing whether pre-determined characteristics differ by the treatment and the control group. In the below code, I test whether average pre-treatment (1975) earnings differ by treatment status. I do this by running a t-test:
 
 	ttest re75, by(treat)
 
 The `ttest` command returns a lot of information. We see for example that mean earnings in the treated group were 39 dollars higher than those of the control group. However, this is small relative to its standard error. 
 
-The bottom of the output contains the p-values for a variety of hypotheses. We see that we cannot reject the null hypothesis of the two means being equal. The p-value for this particular null hypothesis is 0.9182.
+The bottom of the output contains the p-values for a variety of hypotheses. We see that we cannot reject the **null hypothesis of the two means being equal**. The p-value for this particular null hypothesis is 0.9182.
 
 At least based on this variable, it seems that treatment has been effectively randomized. One could perform equivalent tests for all pre-determined variables available. To be thorough, one ought to adjust for multiple hypothesis testing but I will not address that here.
 
@@ -38,6 +40,8 @@ The assumptions required for a causal interpretation are:
 
 + Stable unit treatment value (Rubin, 1978)
 
-For more details, see Athey and Imbens (2016) (https://arxiv.org/abs/1607.00698)
+For more details, see [Athey and Imbens (2016)](https://arxiv.org/abs/1607.00698)
 
-Under these assumptions, we can interpret the difference as an estimate of the average treatment effect on the treated (ATET). As the treatment group have earnings that are $887 higher than the control group on average, we estimate an ATET of $887, which is marginally statistically significant.
+Under these assumptions, we can interpret the difference as an estimate of the **average treatment effect on the treated (ATET)**. As the treatment group have earnings that are $887 higher than the control group on average, we estimate an ATET of $887, which is marginally statistically significant.
+
+Based on this simple analysis, we conclude that on average the training programme increased earnings of participants by $887.

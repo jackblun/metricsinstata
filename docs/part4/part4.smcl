@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part4/part4.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}17 Mar 2020, 17:47:35
+ {txt}opened on:  {res}30 Mar 2020, 09:43:44
 {txt}
 {com}. //_1
 . cd "~/git_repos/metricsinstata/docs/part4"
@@ -57,7 +57,7 @@ combined {c |}{res}{col 12}    722{col 22} 5454.636{col 34} 232.7105{col 46} 625
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/jack/git_repos/metricsinstata/docs/part4/part4.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}17 Mar 2020, 17:47:35
+ {txt}closed on:  {res}30 Mar 2020, 09:43:44
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

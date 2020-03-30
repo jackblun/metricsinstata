@@ -65,10 +65,11 @@ table tbody:last-child tr:last-child td {border-bottom:1px solid black;}
 </pre>
 <pre class='stata'>. use "nsw.dta", clear
 </pre>
-<p>Recall that this is data from a randomized trial in which some individuals are given employment training. We would like to test whether the training affected the earnings of participants.</p>
+<p>Recall that this is data from a randomized trial in which some individuals are given employment training.</p>
+<p>We would like to test whether the training affected the earnings of participants.</p>
 <h2 id="checking-for-effective-randomization">2. Checking for effective randomization</h2>
-<p>When confronted with data from a randomized experiment, one of the first checks should be to verify that the randomization has been effective.</p>
-<p>A simple way to do that is by testing whether pre-determined characteristics differ by the treatment and the control group. In the below code, I test whether pre-treatment (1975) earnings differ depending on treatment status. I do this by running a t-test:</p>
+<p>When confronted with data from a randomized experiment, one of the first checks should be to verify that the <strong>randomization has been effective</strong>.</p>
+<p>A simple way to do that is by testing whether pre-determined characteristics differ by the treatment and the control group. In the below code, I test whether average pre-treatment (1975) earnings differ by treatment status. I do this by running a t-test:</p>
 <pre class='stata'>. ttest re75, by(treat)
 
 Two-sample t test with equal variances
@@ -89,7 +90,7 @@ Ho: diff = 0                                     degrees of freedom =      720
  Pr(T &lt; t) = 0.4591         Pr(|T| > |t|) = 0.9182          Pr(T > t) = 0.5409
 </pre>
 <p>The <code>ttest</code> command returns a lot of information. We see for example that mean earnings in the treated group were 39 dollars higher than those of the control group. However, this is small relative to its standard error.</p>
-<p>The bottom of the output contains the p-values for a variety of hypotheses. We see that we cannot reject the null hypothesis of the two means being equal. The p-value for this particular null hypothesis is 0.9182.</p>
+<p>The bottom of the output contains the p-values for a variety of hypotheses. We see that we cannot reject the <strong>null hypothesis of the two means being equal</strong>. The p-value for this particular null hypothesis is 0.9182.</p>
 <p>At least based on this variable, it seems that treatment has been effectively randomized. One could perform equivalent tests for all pre-determined variables available. To be thorough, one ought to adjust for multiple hypothesis testing but I will not address that here.</p>
 <h2 id="estimating-a-treatment-effect">3. Estimating a treatment effect</h2>
 <p>Given the above evidence that randomization has been effective, I now compare outcomes between the treated and control group. I will run a t-test to test whether post-experiment (1978) earnings differ between the treatment and the control group</p>
@@ -118,7 +119,8 @@ Ho: diff = 0                                     degrees of freedom =      720
 <li><p>Randomization</p></li>
 <li><p>Stable unit treatment value (Rubin, 1978)</p></li>
 </ul>
-<p>For more details, see Athey and Imbens (2016) (https://arxiv.org/abs/1607.00698)</p>
-<p>Under these assumptions, we can interpret the difference as an estimate of the average treatment effect on the treated (ATET). As the treatment group have earnings that are $887 higher than the control group on average, we estimate an ATET of $887, which is marginally statistically significant.</p>
+<p>For more details, see <a href="https://arxiv.org/abs/1607.00698">Athey and Imbens (2016)</a></p>
+<p>Under these assumptions, we can interpret the difference as an estimate of the <strong>average treatment effect on the treated (ATET)</strong>. As the treatment group have earnings that are $887 higher than the control group on average, we estimate an ATET of $887, which is marginally statistically significant.</p>
+<p>Based on this simple analysis, we conclude that on average the training programme increased earnings of participants by $887.</p>
 </body>
 </html>
